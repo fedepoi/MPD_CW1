@@ -1,6 +1,7 @@
 package org.me.gcu.vivaldo_federico_s1828951;
 
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -8,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
@@ -125,7 +128,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,GoogleMa
 
                 LatLng ltln = new LatLng(lt, ln);
 
-                CustomInfoWindow customInfoWindow=new CustomInfoWindow(getActivity());
+                CustomInfoWindow customInfoWindow=new CustomInfoWindow(getContext());
                 Marker tmp ;
 
                 tmp= this.mMap.addMarker(new MarkerOptions().position(ltln).title(roadWork.getTitle()));
@@ -166,6 +169,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,GoogleMa
     @Override
     public void onInfoWindowClick(Marker marker) {
         Log.e("ciao",marker.getTitle());
+
+       marker.hideInfoWindow();
+        // Custom dialog setup
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.view_more_dialog);
+        dialog.setTitle("Custom Dialog Example");
+// Set the custom dialog components as a TextView and Button component
+        TextView text = (TextView) dialog.findViewById(R.id.infoView);
+        text.setText(marker.getTitle());
+        Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+        dialogButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                dialog.dismiss();
+            }
+        } );
+        dialog.show();
+
+
+
     }
 
 

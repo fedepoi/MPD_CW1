@@ -198,15 +198,13 @@ private DrawerLayout drawer;
         FragmentTransaction transaction = manager.beginTransaction();
                 switch (item.getItemId()) {
             case R.id.home:
-
-                transaction.replace(R.id.fragment_container, new MapFragment());
-                transaction.commit();
-
+                Fragment fragment = new org.me.gcu.vivaldo_federico_s1828951.MapFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,fragment).commit();
                 break;
             case R.id.date:
 
-                transaction.replace(R.id.fragment_container, new CheckByDateFragment());
-                transaction.commit();
+                Fragment fragment2 = new CheckByDateFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,fragment2).commit();
                 break;
             case R.id.road:
                 // do your code
@@ -214,8 +212,8 @@ private DrawerLayout drawer;
             case R.id.plan:
                 // do your code
                 break;
-            default:
-                return super.onOptionsItemSelected(item);
+//            default:
+//                return super.onOptionsItemSelected(item);
         }
        return true;
     }
