@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" tools:showIn='navigation_view'>
 
-        <item android:id="@+id/home"
-            android:title="Home" />
-        <item android:id="@+id/date"
-            android:title="Check by date" />
-        <item android:id="@+id/road"
-            android:title="Check by road" />
-        <item android:id="@+id/plan"
-            android:title="Plan your journey" />
+<!--        <item android:id="@+id/home"-->
+<!--            android:title="Home" />-->
+<!--        <item android:id="@+id/date"-->
+<!--            android:title="Check by date" />-->
+<!--        <item android:id="@+id/road"-->
+<!--            android:title="Check by road" />-->
+<!--        <item android:id="@+id/plan"-->
+<!--            android:title="Plan your journey" />-->
 
-
+<group android:checkableBehavior="single">
+                <item android:id="@+id/home"
+                    android:title="Home" />
+                <item android:id="@+id/date"
+                    android:title="Check by date" />
+                <item android:id="@+id/road"
+                    android:title="Check by road" />
+                <item android:id="@+id/plan"
+                    android:title="Plan your journey" />
+</group>
 </menu>
