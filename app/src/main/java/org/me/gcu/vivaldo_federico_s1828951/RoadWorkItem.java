@@ -18,9 +18,11 @@ public class RoadWorkItem {
     private String works;
     private String management;
 
+    private String type;
 
 
-    public RoadWorkItem(){
+
+    public RoadWorkItem(String type){
         this.title="";
         this.description="";
         this.link="";
@@ -28,6 +30,7 @@ public class RoadWorkItem {
         this.author="";
         this.comments="";
         this.pubDate="";
+        this.type=type;
     }
 
     public RoadWorkItem(String title,String desc, String link,String point, String author,String comments, String pub){
@@ -42,16 +45,31 @@ public class RoadWorkItem {
 
 
     private void parseDesc(){
-        String noBR = this.description.replaceAll("(<br />)+", "+");
-        String[] split = noBR.trim().split("\\+");
-      // Log.e("nobr->",Integer.toString(split.length));
-        if(split.length>1&&split.length <= 3){
 
-             setStartDate(split[0]);
-             setEndDate(split[1]);
+        if(this.type.equals("plannedRoadWork")){
 
+            String noBR = this.description.replaceAll("(<br />)+", "+");
+            String[] split = noBR.trim().split("\\+");
 
+            if(split.length>1&&split.length <= 3){
+
+                setStartDate(split[0]);
+                setEndDate(split[1]);
+                setDesc(split[2]);
+//          String a= split[2].replaceFirst("Works:","+");
+//          String b =a.replaceFirst("Management:","+");
+//          String[] stringArray2=b.trim().split("\\+");
+//            Log.e("nobr->",Arrays.toString(stringArray2));
+            }
         }
+        else if(this.type.equals("roadWork")){
+            System.out.println("rw");
+        }
+        else if (this.type.equals("incident")){
+            System.out.println("inc");
+        }
+
+
 
 
     }
@@ -124,7 +142,7 @@ return split[0];
     }
 
     public String toString (){
-        return(this.title+" - "+this.description);
+        return(this.title+" \n "+this.description+"\n"+this.link+"\n  point:"+this.point+"\n"+this.author+"\n"+this.comments+"\n"+this.startDate+"\n"+this.endDate+"\n"+this.pubDate);
     }
 
 

@@ -24,26 +24,25 @@ import java.net.URL;
 import java.net.URLConnection;
 
 
-
 public class DataFeed {
     private String url;
     private String result;
     private final DataInterface dataInt;
 
 
-    DataFeed(DataInterface dataInt){
-        this.dataInt=dataInt;
+    DataFeed(DataInterface dataInt) {
+        this.dataInt = dataInt;
     }
-    public DataFeed(String aurl,DataInterface dataInt)
-    {
+
+    public DataFeed(String aurl, DataInterface dataInt) {
         this.url = aurl;
-        this.dataInt=dataInt;
+        this.dataInt = dataInt;
         doSomeTaskAsync();
     }
 
 
     public void doSomeTaskAsync() {
-     //   String result;
+        //   String result;
         HandlerThread ht = new HandlerThread("MyHandlerThread");
         ht.start();
         Handler asyncHandler = new Handler(ht.getLooper()) {
@@ -51,45 +50,39 @@ public class DataFeed {
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
                 Object response = msg.obj;
-              //  doSomethingOnUi(response);
-                dataInt.receiveData((String)response);
+                //  doSomethingOnUi(response);
+                dataInt.receiveData((String) response);
             }
         };
         Runnable runnable = new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 // your async code goes here.
-                Log.e("DataFeed","Starting async thread");
+                Log.e("DataFeed", "Starting async thread");
 
 
+                URL aurl;
+                URLConnection yc;
+                BufferedReader in = null;
+                String inputLine = "";
 
-                        URL aurl;
-        URLConnection yc;
-        BufferedReader in = null;
-        String inputLine = "";
+                try {
+                    aurl = new URL(url);
+                    yc = aurl.openConnection();
+                    in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
+                    while ((inputLine = in.readLine()) != null) {
+                        result = result + inputLine;
 
-        try
-        {
-            aurl = new URL(url);
-            yc = aurl.openConnection();
-            in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-            while ((inputLine = in.readLine()) != null)
-            {
-                result = result + inputLine;
+                        //System.out.println(inputLine);
 
-                //System.out.println(inputLine);
-
-            }
-            in.close();
-        }
-        catch (IOException ae)
-        {
-            Log.e("run error", "ioexception in run");
-        }
+                    }
+                    in.close();
+                } catch (IOException ae) {
+                    Log.e("run error", "ioexception in run");
+                }
                 // create message and pass any object here doesn't matter
                 // for a simple example I have used a simple string
-               Message message = new Message();
+                Message message = new Message();
                 message.obj = result;
 
                 asyncHandler.sendMessage(message);
@@ -98,10 +91,6 @@ public class DataFeed {
         };
         asyncHandler.post(runnable);
     }
-
-
-
-
 
 
 //    private void doSomethingOnUi(Object response)
@@ -122,12 +111,6 @@ public class DataFeed {
 //            }
 //        });
 //    }
-
-
-
-
-
-
 
 
 }

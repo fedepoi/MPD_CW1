@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:id="@+id/dialogInfo">
     <TextView
-        android:id="@+id/infoView"
+        android:id="@+id/dialog_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
@@ -13,6 +13,56 @@
         android:layout_gravity="center"
         android:padding="10dp"
         />
+    <TextView
+        android:id="@+id/dialog_startDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:gravity="left"
+        android:layout_gravity="left"
+        android:padding="10dp"
+        />
+    <TextView
+        android:id="@+id/dialog_endDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:gravity="left"
+        android:layout_gravity="left"
+        android:padding="10dp"
+        />
+    <TextView
+        android:id="@+id/dialog_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Link: "
+        android:gravity="left"
+        android:layout_gravity="left"
+        android:padding="10dp"
+        />
+
+
+    <TextView
+        android:id="@+id/dialog_pubDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pub Date: "
+        android:gravity="left"
+        android:layout_gravity="left"
+        android:padding="10dp"
+        />
+
+    <TextView
+        android:id="@+id/dialog_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description: "
+        android:gravity="left"
+        android:layout_gravity="left"
+        android:padding="10dp"
+        />
+
+
     <Button
         android:id="@+id/dialogButtonOK"
         android:layout_width="wrap_content"
