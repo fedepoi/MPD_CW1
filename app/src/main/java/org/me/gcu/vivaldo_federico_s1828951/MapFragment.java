@@ -45,10 +45,12 @@ import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import com.google.android.gms.maps.SupportMapFragment;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener,
+public class MapFragment extends Fragment implements Observer, OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener,
         //DataInterface,
         AdapterView.OnItemSelectedListener {
 
@@ -65,20 +67,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private Spinner spinner;
 
-    private ArrayList<RoadWorkItem> plannedRoadWorksArray= new ArrayList<RoadWorkItem>();
-    private ArrayList<RoadWorkItem> roadWorksArray= new ArrayList<RoadWorkItem>();
-    private ArrayList<RoadWorkItem> incidentsArray= new ArrayList<RoadWorkItem>();
+    private ArrayList<RoadWorkItem> plannedRoadWorksArray = new ArrayList<RoadWorkItem>();
+    private ArrayList<RoadWorkItem> roadWorksArray = new ArrayList<RoadWorkItem>();
+    private ArrayList<RoadWorkItem> incidentsArray = new ArrayList<RoadWorkItem>();
 
-    private ArrayList<RoadWorkItem> arrayList;
+//    private ArrayList<RoadWorkItem> arrayList;
 
-    private ArrayList<Marker> mMarker= new ArrayList<Marker>();
+    private ArrayList<Marker> mMarker = new ArrayList<Marker>();
 
-    public MapFragment(ArrayList<RoadWorkItem> array){
-        this.arrayList= array;
-    }
+//    public MapFragment(ArrayList<RoadWorkItem> array){
+//        this.arrayList= array;
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        dataFeed = new DataFeed("plannedRoadWork", plannedRoadWorksURL);
+        dataFeed.addObserver(this);
         Log.e("map fragment on create", "alive");
         View view = inflater.inflate(R.layout.map_fragment, container, false);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -175,29 +179,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         //dataFeed = new DataFeed(plannedRoadWorksURL, this);
 
         // new Thread(new Task(urlSource)).start();
-       // getDataFeed(roadWorksURL);
+        // getDataFeed(roadWorksURL);
         LatLng glasgow = new LatLng(55.860916, -4.251433);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(glasgow, 12.0f));
 
-        Marker tmp;
-        for (RoadWorkItem rwi : this.arrayList) {
 
-            double lt = parseStringToDouble(rwi.getLat());
-            double ln = parseStringToDouble(rwi.getLon());
-
-            LatLng ltln = new LatLng(lt, ln);
-
-            CustomInfoWindow customInfoWindow = new CustomInfoWindow(getContext());
-            tmp = this.mMap.addMarker(new MarkerOptions().position(ltln).title(rwi.getTitle()));
-            tmp.setTag(rwi);
-
-            mMarker.add(tmp);
-            this.mMap.setInfoWindowAdapter(customInfoWindow);
-            this.mMap.setOnInfoWindowClickListener(this);
-        }
     }
 
-//    private void displayMarkers(ArrayList<RoadWorkItem> a){
+    //    private void displayMarkers(ArrayList<RoadWorkItem> a){
 //        for (RoadWorkItem rwi : a) {
 //            Log.e("hey",rwi.toString());
 //                double lt = parseStringToDouble(rwi.getLat());
@@ -217,6 +206,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private static double parseStringToDouble(String value) {
         return value == null || value.isEmpty() ? Double.NaN : Double.parseDouble(value);
     }
+
     @Override
     public void onInfoWindowClick(Marker marker) {
         Log.e("ciao", marker.getTitle());
@@ -278,14 +268,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 //mMap.clear();
 
             } else if (text.equals("Planned Road Works")) {
-               // mMap.clear();
-              //  getDataFeed(plannedRoadWorksURL);
+                // mMap.clear();
+                //  getDataFeed(plannedRoadWorksURL);
             } else if (text.equals("Incidents")) {
-               // mMap.clear();
-               // getDataFeed(incidentsURL);
+                // mMap.clear();
+                // getDataFeed(incidentsURL);
             } else if (text.equals("Please select what to view on the map…")) {
-               // mMap.clear();
-               // Log.e("Spinner default", "clear map");
+                // mMap.clear();
+                // Log.e("Spinner default", "clear map");
             }
 
 
@@ -298,8 +288,42 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
 
-    //--------------------------------------------------------------------------------------------------------------------------------------------------
+
+        ArrayList<RoadWorkItem> a = dataFeed.getList();
+
+
+//Freeze but not in main thread
+//        Handler uiThread = new Handler(Looper.getMainLooper());
+//        uiThread.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                for (RoadWorkItem rwi : a) {
+//                    Marker tmp;
+//                    double lt = parseStringToDouble(rwi.getLat());
+//                    double ln = parseStringToDouble(rwi.getLon());
+//
+//                    LatLng ltln = new LatLng(lt, ln);
+//
+//                    CustomInfoWindow customInfoWindow = new CustomInfoWindow(getContext());
+//                    tmp = mMap.addMarker(new MarkerOptions().position(ltln).title(rwi.getTitle()));
+//                    tmp.setTag(rwi);
+//
+//                    mMarker.add(tmp);
+//                    mMap.setInfoWindowAdapter(customInfoWindow);
+//                    mMap.setOnInfoWindowClickListener(MapFragment.this::onInfoWindowClick);
+//
+//                }
+//            }
+//        });
+
+
+    }
+
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------
 //    public void getDataFeed(String url) {
 //
 //        HandlerThread ht = new HandlerThread("MyHandlerThread");
@@ -389,6 +413,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 //            }
 //        });
 //    }
-    //--------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------
 
 }
