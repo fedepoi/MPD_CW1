@@ -44,6 +44,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 
 import com.google.android.gms.maps.SupportMapFragment;
 
@@ -64,6 +65,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private Spinner spinner;
 
+    private ArrayList<RoadWorkItem> plannedRoadWorksArray= new ArrayList<RoadWorkItem>();
+    private ArrayList<RoadWorkItem> roadWorksArray= new ArrayList<RoadWorkItem>();
+    private ArrayList<RoadWorkItem> incidentsArray= new ArrayList<RoadWorkItem>();
+
+    private ArrayList<RoadWorkItem> arrayList;
+
+    private ArrayList<Marker> mMarker= new ArrayList<Marker>();
+
+    public MapFragment(ArrayList<RoadWorkItem> array){
+        this.arrayList= array;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.e("map fragment on create", "alive");
@@ -80,80 +93,80 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
 
-    private void parseRoadData(String str, String rwiType) {
-        try {
-            RoadWorkItem roadWork = new RoadWorkItem(rwiType);
-            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            XmlPullParser xpp = factory.newPullParser();
-            xpp.setInput(new StringReader(str));
-            int eventType = xpp.getEventType();
-            while (eventType != XmlPullParser.END_DOCUMENT) {
-                if (eventType == XmlPullParser.START_DOCUMENT) {
-                    System.out.println("Start document");
-                    Log.e("start xml doc", "Start document");
-                } else if (eventType == XmlPullParser.START_TAG) {
-                    if (xpp.getName().equalsIgnoreCase("title")) {
+//    private void parseRoadData(String str, String rwiType) {
+//        try {
+//            RoadWorkItem roadWork = new RoadWorkItem(rwiType);
+//            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+//            factory.setNamespaceAware(true);
+//            XmlPullParser xpp = factory.newPullParser();
+//            xpp.setInput(new StringReader(str));
+//            int eventType = xpp.getEventType();
+//            while (eventType != XmlPullParser.END_DOCUMENT) {
+//                if (eventType == XmlPullParser.START_DOCUMENT) {
+//                    System.out.println("Start document");
+//                    Log.e("start xml doc", "Start document");
+//                } else if (eventType == XmlPullParser.START_TAG) {
+//                    if (xpp.getName().equalsIgnoreCase("title")) {
+//
+//                        String temp = xpp.nextText();
+//                        roadWork.setTitle(temp);
+//                    } else if (xpp.getName().equalsIgnoreCase("description")) {
+//
+//                        String temp = xpp.nextText();
+//                        roadWork.setDesc(temp);
+//                    } else if (xpp.getName().equalsIgnoreCase("link")) {
+//
+//                        String temp = xpp.nextText();
+//                        roadWork.setLink(temp);
+//                    } else if (xpp.getName().equalsIgnoreCase("point")) {
+//
+//                        String temp = xpp.nextText();
+//                        roadWork.setPoint(temp);
+//                    } else if (xpp.getName().equalsIgnoreCase("author")) {
+//
+//                        String temp = xpp.nextText();
+//                        roadWork.setAuthor(temp);
+//                    } else if (xpp.getName().equalsIgnoreCase("comments")) {
+//
+//                        String temp = xpp.nextText();
+//                        roadWork.setComments(temp);
+//                    } else if (xpp.getName().equalsIgnoreCase("pubDate")) {
+//
+//                        String temp = xpp.nextText();
+//                        roadWork.setPubDate(temp);
+//                    }
+//
+//
+//                }
+//                double lt = parseStringToDouble(roadWork.getLat());
+//                double ln = parseStringToDouble(roadWork.getLon());
+//
+//                LatLng ltln = new LatLng(lt, ln);
+//
+//                CustomInfoWindow customInfoWindow = new CustomInfoWindow(getContext());
+//                Marker tmp;
+//
+//                tmp = this.mMap.addMarker(new MarkerOptions().position(ltln).title(roadWork.getTitle()));
+//                tmp.setTag(roadWork);
+//                this.mMap.setInfoWindowAdapter(customInfoWindow);
+//                this.mMap.setOnInfoWindowClickListener(this);
+//
+//                eventType = xpp.next();
+//
+//            }
+//        } catch (XmlPullParserException ae1) {
+//            Log.e("pull parser exception", "Parsing error" + ae1.toString());
+//        } catch (IOException ae1) {
+//            Log.e("io exception", "IO error during parsing");
+//        }
+//
+//        System.out.println("End document");
+//
+//    }
 
-                        String temp = xpp.nextText();
-                        roadWork.setTitle(temp);
-                    } else if (xpp.getName().equalsIgnoreCase("description")) {
-
-                        String temp = xpp.nextText();
-                        roadWork.setDesc(temp);
-                    } else if (xpp.getName().equalsIgnoreCase("link")) {
-
-                        String temp = xpp.nextText();
-                        roadWork.setLink(temp);
-                    } else if (xpp.getName().equalsIgnoreCase("point")) {
-
-                        String temp = xpp.nextText();
-                        roadWork.setPoint(temp);
-                    } else if (xpp.getName().equalsIgnoreCase("author")) {
-
-                        String temp = xpp.nextText();
-                        roadWork.setAuthor(temp);
-                    } else if (xpp.getName().equalsIgnoreCase("comments")) {
-
-                        String temp = xpp.nextText();
-                        roadWork.setComments(temp);
-                    } else if (xpp.getName().equalsIgnoreCase("pubDate")) {
-
-                        String temp = xpp.nextText();
-                        roadWork.setPubDate(temp);
-                    }
-
-
-                }
-                double lt = parseStringToDouble(roadWork.getLat());
-                double ln = parseStringToDouble(roadWork.getLon());
-
-                LatLng ltln = new LatLng(lt, ln);
-
-                CustomInfoWindow customInfoWindow = new CustomInfoWindow(getContext());
-                Marker tmp;
-
-                tmp = this.mMap.addMarker(new MarkerOptions().position(ltln).title(roadWork.getTitle()));
-                tmp.setTag(roadWork);
-                this.mMap.setInfoWindowAdapter(customInfoWindow);
-                this.mMap.setOnInfoWindowClickListener(this);
-
-                eventType = xpp.next();
-
-            }
-        } catch (XmlPullParserException ae1) {
-            Log.e("pull parser exception", "Parsing error" + ae1.toString());
-        } catch (IOException ae1) {
-            Log.e("io exception", "IO error during parsing");
-        }
-
-        System.out.println("End document");
-
-    }
-
-    private static double parseStringToDouble(String value) {
-        return value == null || value.isEmpty() ? Double.NaN : Double.parseDouble(value);
-    }
+//    private static double parseStringToDouble(String value) {
+//        return value == null || value.isEmpty() ? Double.NaN : Double.parseDouble(value);
+//    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -162,13 +175,48 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         //dataFeed = new DataFeed(plannedRoadWorksURL, this);
 
         // new Thread(new Task(urlSource)).start();
-        getDataFeed(plannedRoadWorksURL);
+       // getDataFeed(roadWorksURL);
         LatLng glasgow = new LatLng(55.860916, -4.251433);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(glasgow, 12.0f));
 
+        Marker tmp;
+        for (RoadWorkItem rwi : this.arrayList) {
 
+            double lt = parseStringToDouble(rwi.getLat());
+            double ln = parseStringToDouble(rwi.getLon());
+
+            LatLng ltln = new LatLng(lt, ln);
+
+            CustomInfoWindow customInfoWindow = new CustomInfoWindow(getContext());
+            tmp = this.mMap.addMarker(new MarkerOptions().position(ltln).title(rwi.getTitle()));
+            tmp.setTag(rwi);
+
+            mMarker.add(tmp);
+            this.mMap.setInfoWindowAdapter(customInfoWindow);
+            this.mMap.setOnInfoWindowClickListener(this);
+        }
     }
 
+//    private void displayMarkers(ArrayList<RoadWorkItem> a){
+//        for (RoadWorkItem rwi : a) {
+//            Log.e("hey",rwi.toString());
+//                double lt = parseStringToDouble(rwi.getLat());
+//                double ln = parseStringToDouble(rwi.getLon());
+//
+//                LatLng ltln = new LatLng(lt, ln);
+//
+//                CustomInfoWindow customInfoWindow = new CustomInfoWindow(getContext());
+//                Marker tmp;
+//
+//                tmp = this.mMap.addMarker(new MarkerOptions().position(ltln).title(rwi.getTitle()));
+//                tmp.setTag(rwi);
+//                this.mMap.setInfoWindowAdapter(customInfoWindow);
+//                this.mMap.setOnInfoWindowClickListener(this);
+//        }
+//    }
+    private static double parseStringToDouble(String value) {
+        return value == null || value.isEmpty() ? Double.NaN : Double.parseDouble(value);
+    }
     @Override
     public void onInfoWindowClick(Marker marker) {
         Log.e("ciao", marker.getTitle());
@@ -226,18 +274,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         {
             String text = (String) spinner.getSelectedItem();
             if (text.equals("Road Works")) {
-                getDataFeed(roadWorksURL);
-                mMap.clear();
+                //getDataFeed(roadWorksURL);
+                //mMap.clear();
 
             } else if (text.equals("Planned Road Works")) {
-                mMap.clear();
-                getDataFeed(plannedRoadWorksURL);
+               // mMap.clear();
+              //  getDataFeed(plannedRoadWorksURL);
             } else if (text.equals("Incidents")) {
-                mMap.clear();
-                getDataFeed(incidentsURL);
+               // mMap.clear();
+               // getDataFeed(incidentsURL);
             } else if (text.equals("Please select what to view on the map…")) {
-                mMap.clear();
-                Log.e("Spinner default", "clear map");
+               // mMap.clear();
+               // Log.e("Spinner default", "clear map");
             }
 
 
@@ -252,95 +300,95 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------
-    public void getDataFeed(String url) {
+//    public void getDataFeed(String url) {
+//
+//        HandlerThread ht = new HandlerThread("MyHandlerThread");
+//        ht.start();
+//        Handler asyncHandler = new Handler(ht.getLooper()) {
+//            @Override
+//            public void handleMessage(@NonNull Message msg) {
+//                super.handleMessage(msg);
+//                Object response = msg.obj;
+//                //  doSomethingOnUi(response);
+//                //  dataInt.receiveData((String)response);
+//                if (url.equals(plannedRoadWorksURL)) {
+//                  //  displayPlannedRoadWorkMarkers((String)response);
+//                } else if (url.equals(roadWorksURL)) {
+//                  //  displayRoadWorksMarkers((String)response);
+//                } else if (url.equals(incidentsURL)) {
+//                   // displayIncidentsMarkers((String)response);
+//                }
+//            }
+//        };
+//        Runnable runnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                Log.e("DataFeed", "Starting async thread");
+//                URL aurl;
+//                URLConnection yc;
+//                BufferedReader in = null;
+//                String inputLine = "";
+//                String result = "";
+//                try {
+//                    aurl = new URL(url);
+//                    yc = aurl.openConnection();
+//                    in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
+//                    while ((inputLine = in.readLine()) != null) {
+//                        result = result + inputLine;
+//                    }
+//                    in.close();
+//                } catch (IOException ae) {
+//                    Log.e("run error", "ioexception in run");
+//                }
+//                Message message = new Message();
+//                message.obj = result;
+//
+//                asyncHandler.sendMessage(message);
+//
+//            }
+//        };
+//        asyncHandler.post(runnable);
+//    }
 
-        HandlerThread ht = new HandlerThread("MyHandlerThread");
-        ht.start();
-        Handler asyncHandler = new Handler(ht.getLooper()) {
-            @Override
-            public void handleMessage(@NonNull Message msg) {
-                super.handleMessage(msg);
-                Object response = msg.obj;
-                //  doSomethingOnUi(response);
-                //  dataInt.receiveData((String)response);
-                if (url.equals(plannedRoadWorksURL)) {
-                    displayPlannedRoadWorkMarkers((String)response);
-                } else if (url.equals(roadWorksURL)) {
-                    displayRoadWorksMarkers((String)response);
-                } else if (url.equals(incidentsURL)) {
-                    displayIncidentsMarkers((String)response);
-                }
-            }
-        };
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                Log.e("DataFeed", "Starting async thread");
-                URL aurl;
-                URLConnection yc;
-                BufferedReader in = null;
-                String inputLine = "";
-                String result = "";
-                try {
-                    aurl = new URL(url);
-                    yc = aurl.openConnection();
-                    in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-                    while ((inputLine = in.readLine()) != null) {
-                        result = result + inputLine;
-                    }
-                    in.close();
-                } catch (IOException ae) {
-                    Log.e("run error", "ioexception in run");
-                }
-                Message message = new Message();
-                message.obj = result;
-
-                asyncHandler.sendMessage(message);
-
-            }
-        };
-        asyncHandler.post(runnable);
-    }
-
-    private void displayPlannedRoadWorkMarkers(Object response) {
-        Handler uiThread = new Handler(Looper.getMainLooper());
-        uiThread.post(new Runnable() {
-            @Override
-            public void run() {
-                String str = (String)response;
-                String replace = str.replace("null", "");
-                Log.e("received data", replace);
-                rdataToDisplay = replace;
-                parseRoadData(replace,"plannedRoadWork");
-            }
-        });
-    }
-    private void displayRoadWorksMarkers(Object response) {
-        Handler uiThread = new Handler(Looper.getMainLooper());
-        uiThread.post(new Runnable() {
-            @Override
-            public void run() {
-                String str = (String)response;
-                String replace = str.replace("null", "");
-                Log.e("received data", replace);
-                rdataToDisplay = replace;
-                parseRoadData(replace,"roadWork");
-            }
-        });
-    }
-    private void displayIncidentsMarkers(Object response) {
-        Handler uiThread = new Handler(Looper.getMainLooper());
-        uiThread.post(new Runnable() {
-            @Override
-            public void run() {
-                String str = (String)response;
-                String replace = str.replace("null", "");
-                Log.e("received data", replace);
-                rdataToDisplay = replace;
-                parseRoadData(replace,"incidents");
-            }
-        });
-    }
+//    private void displayPlannedRoadWorkMarkers(Object response) {
+//        Handler uiThread = new Handler(Looper.getMainLooper());
+//        uiThread.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                String str = (String)response;
+//                String replace = str.replace("null", "");
+//                Log.e("received data", replace);
+//                rdataToDisplay = replace;
+//                parseRoadData(replace,"plannedRoadWork");
+//            }
+//        });
+//    }
+//    private void displayRoadWorksMarkers(Object response) {
+//        Handler uiThread = new Handler(Looper.getMainLooper());
+//        uiThread.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                String str = (String)response;
+//                String replace = str.replace("null", "");
+//                Log.e("received data", replace);
+//                rdataToDisplay = replace;
+//                parseRoadData(replace,"roadWork");
+//            }
+//        });
+//    }
+//    private void displayIncidentsMarkers(Object response) {
+//        Handler uiThread = new Handler(Looper.getMainLooper());
+//        uiThread.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                String str = (String)response;
+//                String replace = str.replace("null", "");
+//                Log.e("received data", replace);
+//                rdataToDisplay = replace;
+//                parseRoadData(replace,"incidents");
+//            }
+//        });
+//    }
     //--------------------------------------------------------------------------------------------------------------------------------------------------
 
 }

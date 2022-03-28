@@ -46,27 +46,29 @@ public class RoadWorkItem {
 
     private void parseDesc(){
 
-        if(this.type.equals("plannedRoadWork")){
+        switch (this.type) {
+            case "plannedRoadWork":
 
-            String noBR = this.description.replaceAll("(<br />)+", "+");
-            String[] split = noBR.trim().split("\\+");
+                String noBR = this.description.replaceAll("(<br />)+", "+");
+                String[] split = noBR.trim().split("\\+");
 
-            if(split.length>1&&split.length <= 3){
+                if (split.length > 1 && split.length <= 3) {
 
-                setStartDate(split[0]);
-                setEndDate(split[1]);
-                setDesc(split[2]);
+                    setStartDate(split[0]);
+                    setEndDate(split[1]);
+                    setDesc(split[2]);
 //          String a= split[2].replaceFirst("Works:","+");
 //          String b =a.replaceFirst("Management:","+");
 //          String[] stringArray2=b.trim().split("\\+");
 //            Log.e("nobr->",Arrays.toString(stringArray2));
-            }
-        }
-        else if(this.type.equals("roadWork")){
-            System.out.println("rw");
-        }
-        else if (this.type.equals("incident")){
-            System.out.println("inc");
+                }
+                break;
+            case "roadWork":
+                System.out.println("rw");
+                break;
+            case "incident":
+                System.out.println("inc");
+                break;
         }
 
 
@@ -142,7 +144,7 @@ return split[0];
     }
 
     public String toString (){
-        return(this.title+" \n "+this.description+"\n"+this.link+"\n  point:"+this.point+"\n"+this.author+"\n"+this.comments+"\n"+this.startDate+"\n"+this.endDate+"\n"+this.pubDate);
+        return(this.title+" \n "+this.description+"\n"+this.link+"\n  point:"+this.point+"\n"+this.author+"\n"+this.comments+"\n"+this.startDate+"\n"+this.endDate+"\n"+this.pubDate+"\n"+getLat()+"\n"+getLon());
     }
 
 
