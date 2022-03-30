@@ -29,161 +29,90 @@ import java.util.Observable;
 public class DataFeed extends Observable {
     private String url;
     private String result;
-  //  private final DataInterface dataInt;
 
     private ArrayList<RoadWorkItem> list;
     private String type;
 
+    private RoadWorkItem roadWork;
 
-//    DataFeed(DataInterface dataInt) {
-//        this.dataInt = dataInt;
-//    }
-//
-//    public DataFeed(String aurl, DataInterface dataInt) {
-//        this.url = aurl;
-//        this.dataInt = dataInt;
-//        doSomeTaskAsync();
-//    }
 
-    public DataFeed (String type, String url){
+    public DataFeed(String type, String url) {
         list = new ArrayList<RoadWorkItem>();
-        this.url=url;
-        this.type=type;
+        this.url = url;
+        this.type = type;
         doSomeTaskAsync();
     }
 
 
-public ArrayList<RoadWorkItem> getList(){
+    public ArrayList<RoadWorkItem> getList() {
         return this.list;
-}
+    }
 
-    //---------------------------------------------------------------------------------------------------------
-//    public void getDataFeed(String url) {
-//
-//        HandlerThread ht = new HandlerThread("MyHandlerThread");
-//        ht.start();
-//        Handler asyncHandler = new Handler(ht.getLooper()) {
-//            @Override
-//            public void handleMessage(@NonNull Message msg) {
-//                super.handleMessage(msg);
-//                Object response = msg.obj;
-//                String str = (String) response;
-//                String replace = str.replace("null", "");
-//
-//                if (url.equals(plannedRoadWorksURL)) {
-//                    parseRoadData(replace,"plannedRoadWork");
-//                } else if (url.equals(roadWorksURL)) {
-//                    parseRoadData(replace,"roadWork");
-//                } else if (url.equals(incidentsURL)) {
-//                    parseRoadData(replace,"incident");
-//                }
-//
-//                doSomethingOnUi();
-////                Log.e("received data", replace);
-////                rdataToDisplay = replace;
-////                parseRoadData(replace, "plannedRoadWork");
-//
-//            }
-//        };
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                Log.e("DataFeed", "Starting async thread");
-//                URL aurl;
-//                URLConnection yc;
-//                BufferedReader in = null;
-//                String inputLine = "";
-//                String result = "";
-//                try {
-//                    aurl = new URL(url);
-//                    yc = aurl.openConnection();
-//                    in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-//                    while ((inputLine = in.readLine()) != null) {
-//                        result = result + inputLine;
-//                    }
-//                    in.close();
-//                } catch (IOException ae) {
-//                    Log.e("run error", "ioexception in run");
-//                }
-//                Message message = new Message();
-//                message.obj = result;
-//
-//                asyncHandler.sendMessage(message);
-//
-//            }
-//        };
-//        asyncHandler.post(runnable);
-//    }
     private void parseRoadData(String str, String rwiType) {
+
         try {
-            RoadWorkItem roadWork = new RoadWorkItem(rwiType);
+            Log.e("-------------------------------------->", str);
+
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             XmlPullParser xpp = factory.newPullParser();
             xpp.setInput(new StringReader(str));
             int eventType = xpp.getEventType();
             while (eventType != XmlPullParser.END_DOCUMENT) {
+                roadWork = new RoadWorkItem(rwiType);
+
+                //roadWork = new RoadWorkItem(rwiType);
                 if (eventType == XmlPullParser.START_DOCUMENT) {
-                    System.out.println("Start document");
-                    Log.e("start xml doc", "Start document");
+                    Log.i("start xml doc", "Start document");
                 } else if (eventType == XmlPullParser.START_TAG) {
-                    if (xpp.getName().equalsIgnoreCase("title")) {
 
-                        String temp = xpp.nextText();
-                        roadWork.setTitle(temp);
-                    } else if (xpp.getName().equalsIgnoreCase("description")) {
+                    //  Log.e("tag name -->",xpp.getName());
 
-                        String temp = xpp.nextText();
-                        roadWork.setDesc(temp);
-                    } else if (xpp.getName().equalsIgnoreCase("link")) {
+                    //  if (xpp.getName().equalsIgnoreCase("item")){
 
-                        String temp = xpp.nextText();
-                        roadWork.setLink(temp);
-                    } else if (xpp.getName().equalsIgnoreCase("point")) {
+                    if (xpp.getName().equalsIgnoreCase("item")) {
 
-                        String temp = xpp.nextText();
-                        roadWork.setPoint(temp);
-                    } else if (xpp.getName().equalsIgnoreCase("author")) {
+                        parseItem(xpp, rwiType);
+                        double lt = parseStringToDouble(roadWork.getLat());
+                        double ln = parseStringToDouble(roadWork.getLon());
 
-                        String temp = xpp.nextText();
-                        roadWork.setAuthor(temp);
-                    } else if (xpp.getName().equalsIgnoreCase("comments")) {
 
-                        String temp = xpp.nextText();
-                        roadWork.setComments(temp);
-                    } else if (xpp.getName().equalsIgnoreCase("pubDate")) {
-
-                        String temp = xpp.nextText();
-                        roadWork.setPubDate(temp);
+                        list.add(roadWork);
                     }
+//                    Log.e("item",xpp.getName());
+//                         if (xpp.getName().equalsIgnoreCase("title")) {
+//                             Log.e("title",xpp.getName());
+//                             String temp = xpp.nextText();
+//                             roadWork.setTitle(temp);
+//                         } else if (xpp.getName().equalsIgnoreCase("description")) {
+//
+//                             String temp = xpp.nextText();
+//                             roadWork.setDesc(temp);
+//                         } else if (xpp.getName().equalsIgnoreCase("link")) {
+//
+//                             String temp = xpp.nextText();
+//                             roadWork.setLink(temp);
+//                         } else if (xpp.getName().equalsIgnoreCase("point")) {
+//
+//                             String temp = xpp.nextText();
+//                             roadWork.setPoint(temp);
+//                         } else if (xpp.getName().equalsIgnoreCase("author")) {
+//
+//                             String temp = xpp.nextText();
+//                             roadWork.setAuthor(temp);
+//                         } else if (xpp.getName().equalsIgnoreCase("comments")) {
+//
+//                             String temp = xpp.nextText();
+//                             roadWork.setComments(temp);
+//                         } else if (xpp.getName().equalsIgnoreCase("pubDate")) {
+//
+//                             String temp = xpp.nextText();
+//                             roadWork.setPubDate(temp);
+//                         }
 
 
                 }
-                double lt = parseStringToDouble(roadWork.getLat());
-                double ln = parseStringToDouble(roadWork.getLon());
-//
-//                LatLng ltln = new LatLng(lt, ln);
-//
-//                CustomInfoWindow customInfoWindow = new CustomInfoWindow(getContext());
-//                Marker tmp;
-//
-//                tmp = this.mMap.addMarker(new MarkerOptions().position(ltln).title(roadWork.getTitle()));
-//                tmp.setTag(roadWork);
-//                this.mMap.setInfoWindowAdapter(customInfoWindow);
-//                this.mMap.setOnInfoWindowClickListener(this);
-//                switch (rwiType) {
-//                    case "plannedRoadWork":
-//                        plannedRoadWorksArray.add(roadWork);
-//                        break;
-//                    case "roadWork":
-//                        roadWorksArray.add(roadWork);
-//                        break;
-//                    case "incident":
-//                        incidentsArray.add(roadWork);
-//                        break;
-//                }
 
-                list.add(roadWork);
 
                 eventType = xpp.next();
 
@@ -199,10 +128,54 @@ public ArrayList<RoadWorkItem> getList(){
         System.out.println("End document");
 
     }
+
     private static double parseStringToDouble(String value) {
         return value == null || value.isEmpty() ? Double.NaN : Double.parseDouble(value);
     }
-    //---------------------------------------------------------------------------------------------------------
+
+
+    private void parseItem(XmlPullParser parser, String rwiType) throws XmlPullParserException, IOException {
+
+        parser.require(XmlPullParser.START_TAG, XmlPullParser.NO_NAMESPACE, "item");
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            if (parser.getName().equalsIgnoreCase("title")) {
+                Log.e("title", parser.getName());
+                String temp = parser.nextText();
+                roadWork.setTitle(temp);
+            } else if (parser.getName().equalsIgnoreCase("description")) {
+
+                String temp = parser.nextText();
+                roadWork.setDesc(temp);
+            } else if (parser.getName().equalsIgnoreCase("link")) {
+
+                String temp = parser.nextText();
+                roadWork.setLink(temp);
+            } else if (parser.getName().equalsIgnoreCase("point")) {
+
+                String temp = parser.nextText();
+                roadWork.setPoint(temp);
+            } else if (parser.getName().equalsIgnoreCase("author")) {
+
+                String temp = parser.nextText();
+                roadWork.setAuthor(temp);
+            } else if (parser.getName().equalsIgnoreCase("comments")) {
+
+                String temp = parser.nextText();
+                roadWork.setComments(temp);
+            } else if (parser.getName().equalsIgnoreCase("pubDate")) {
+
+                String temp = parser.nextText();
+                roadWork.setPubDate(temp);
+            } else {
+                parser.next();
+            }
+
+        }
+    }
+
 
     public void doSomeTaskAsync() {
         //   String result;
@@ -215,7 +188,8 @@ public ArrayList<RoadWorkItem> getList(){
                 Object response = msg.obj;
                 String str = (String) response;
                 String replace = str.replace("null", "");
-                parseRoadData(replace,type);
+
+                parseRoadData(replace, type);
             }
         };
         Runnable runnable = new Runnable() {
@@ -236,16 +210,11 @@ public ArrayList<RoadWorkItem> getList(){
                     in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
                     while ((inputLine = in.readLine()) != null) {
                         result = result + inputLine;
-
-                        //System.out.println(inputLine);
-
                     }
                     in.close();
                 } catch (IOException ae) {
                     Log.e("run error", "ioexception in run");
                 }
-                // create message and pass any object here doesn't matter
-                // for a simple example I have used a simple string
                 Message message = new Message();
                 message.obj = result;
 
@@ -255,26 +224,6 @@ public ArrayList<RoadWorkItem> getList(){
         };
         asyncHandler.post(runnable);
     }
-
-
-//    private void doSomethingOnUi(Object response)
-//    {
-//        Handler uiThread = new Handler(Looper.getMainLooper());
-//        uiThread.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                // now update your UI here
-//                // cast response to whatever you specified earlier
-//                String msg = (String) response;
-//                String replace = msg.replace("null", "");
-//                Log.e("ui thread", replace);
-//
-//
-//                dataInt.receiveData(msg);
-//
-//            }
-//        });
-//    }
 
 
 }

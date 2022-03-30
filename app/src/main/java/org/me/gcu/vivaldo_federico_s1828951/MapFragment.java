@@ -1,6 +1,7 @@
 package org.me.gcu.vivaldo_federico_s1828951;
 
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +16,7 @@ import android.widget.AdapterView;
 
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -24,10 +26,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -51,40 +55,36 @@ import java.util.Observer;
 import com.google.android.gms.maps.SupportMapFragment;
 
 public class MapFragment extends Fragment implements Observer, OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener,
-        //DataInterface,
         AdapterView.OnItemSelectedListener {
 
 
     private GoogleMap mMap;
-    private ActivityMapsBinding binding;
     private String plannedRoadWorksURL = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
     private String roadWorksURL = "https://trafficscotland.org/rss/feeds/roadworks.aspx";
     private String incidentsURL = "https://trafficscotland.org/rss/feeds/currentincidents.aspx";
 
-    private String rdataToDisplay = "";
 
     private DataFeed dataFeed;
 
     private Spinner spinner;
 
-    private ArrayList<RoadWorkItem> plannedRoadWorksArray = new ArrayList<RoadWorkItem>();
-    private ArrayList<RoadWorkItem> roadWorksArray = new ArrayList<RoadWorkItem>();
-    private ArrayList<RoadWorkItem> incidentsArray = new ArrayList<RoadWorkItem>();
 
-//    private ArrayList<RoadWorkItem> arrayList;
+
+    private ArrayList<RoadWorkItem> a;
+    ListView listView;
+    ArrayAdapter adapter;
+
 
     private ArrayList<Marker> mMarker = new ArrayList<Marker>();
 
-//    public MapFragment(ArrayList<RoadWorkItem> array){
-//        this.arrayList= array;
-//    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        dataFeed = new DataFeed("plannedRoadWork", plannedRoadWorksURL);
-        dataFeed.addObserver(this);
+
         Log.e("map fragment on create", "alive");
         View view = inflater.inflate(R.layout.map_fragment, container, false);
+
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
@@ -93,119 +93,33 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         ad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(ad);
         spinner.setOnItemSelectedListener(this);
+
+//
+        adapter = new ArrayAdapter<RoadWorkItem>(getContext(),
+                R.layout.map_fragment, a);
+
+        listView = view.findViewById(R.id.mobile_list);
+
+
         return view;
     }
 
 
-//    private void parseRoadData(String str, String rwiType) {
-//        try {
-//            RoadWorkItem roadWork = new RoadWorkItem(rwiType);
-//            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-//            factory.setNamespaceAware(true);
-//            XmlPullParser xpp = factory.newPullParser();
-//            xpp.setInput(new StringReader(str));
-//            int eventType = xpp.getEventType();
-//            while (eventType != XmlPullParser.END_DOCUMENT) {
-//                if (eventType == XmlPullParser.START_DOCUMENT) {
-//                    System.out.println("Start document");
-//                    Log.e("start xml doc", "Start document");
-//                } else if (eventType == XmlPullParser.START_TAG) {
-//                    if (xpp.getName().equalsIgnoreCase("title")) {
-//
-//                        String temp = xpp.nextText();
-//                        roadWork.setTitle(temp);
-//                    } else if (xpp.getName().equalsIgnoreCase("description")) {
-//
-//                        String temp = xpp.nextText();
-//                        roadWork.setDesc(temp);
-//                    } else if (xpp.getName().equalsIgnoreCase("link")) {
-//
-//                        String temp = xpp.nextText();
-//                        roadWork.setLink(temp);
-//                    } else if (xpp.getName().equalsIgnoreCase("point")) {
-//
-//                        String temp = xpp.nextText();
-//                        roadWork.setPoint(temp);
-//                    } else if (xpp.getName().equalsIgnoreCase("author")) {
-//
-//                        String temp = xpp.nextText();
-//                        roadWork.setAuthor(temp);
-//                    } else if (xpp.getName().equalsIgnoreCase("comments")) {
-//
-//                        String temp = xpp.nextText();
-//                        roadWork.setComments(temp);
-//                    } else if (xpp.getName().equalsIgnoreCase("pubDate")) {
-//
-//                        String temp = xpp.nextText();
-//                        roadWork.setPubDate(temp);
-//                    }
-//
-//
-//                }
-//                double lt = parseStringToDouble(roadWork.getLat());
-//                double ln = parseStringToDouble(roadWork.getLon());
-//
-//                LatLng ltln = new LatLng(lt, ln);
-//
-//                CustomInfoWindow customInfoWindow = new CustomInfoWindow(getContext());
-//                Marker tmp;
-//
-//                tmp = this.mMap.addMarker(new MarkerOptions().position(ltln).title(roadWork.getTitle()));
-//                tmp.setTag(roadWork);
-//                this.mMap.setInfoWindowAdapter(customInfoWindow);
-//                this.mMap.setOnInfoWindowClickListener(this);
-//
-//                eventType = xpp.next();
-//
-//            }
-//        } catch (XmlPullParserException ae1) {
-//            Log.e("pull parser exception", "Parsing error" + ae1.toString());
-//        } catch (IOException ae1) {
-//            Log.e("io exception", "IO error during parsing");
-//        }
-//
-//        System.out.println("End document");
-//
-//    }
 
-//    private static double parseStringToDouble(String value) {
-//        return value == null || value.isEmpty() ? Double.NaN : Double.parseDouble(value);
-//    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        //change feed to road works
-        //dataFeed = new DataFeed(plannedRoadWorksURL, this);
 
-        // new Thread(new Task(urlSource)).start();
-        // getDataFeed(roadWorksURL);
         LatLng glasgow = new LatLng(55.860916, -4.251433);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(glasgow, 12.0f));
-
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        //mMap.addMarker(new MarkerOptions().position(glasgow).title("Marker in Sydney"));
+        dataFeed = new DataFeed("roadWork", roadWorksURL);
+        dataFeed.addObserver(this);
 
     }
 
-    //    private void displayMarkers(ArrayList<RoadWorkItem> a){
-//        for (RoadWorkItem rwi : a) {
-//            Log.e("hey",rwi.toString());
-//                double lt = parseStringToDouble(rwi.getLat());
-//                double ln = parseStringToDouble(rwi.getLon());
-//
-//                LatLng ltln = new LatLng(lt, ln);
-//
-//                CustomInfoWindow customInfoWindow = new CustomInfoWindow(getContext());
-//                Marker tmp;
-//
-//                tmp = this.mMap.addMarker(new MarkerOptions().position(ltln).title(rwi.getTitle()));
-//                tmp.setTag(rwi);
-//                this.mMap.setInfoWindowAdapter(customInfoWindow);
-//                this.mMap.setOnInfoWindowClickListener(this);
-//        }
-//    }
-    private static double parseStringToDouble(String value) {
-        return value == null || value.isEmpty() ? Double.NaN : Double.parseDouble(value);
-    }
 
     @Override
     public void onInfoWindowClick(Marker marker) {
@@ -243,20 +157,6 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
     }
 
 
-//    @Override
-//    public void receiveData(String str) {
-//        Handler handler = new Handler(Looper.getMainLooper());
-//        handler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                String replace = str.replace("null", "");
-//                Log.e("received data", replace);
-//                rdataToDisplay = replace;
-//                parsePlannedRoadWork(replace);
-//            }
-//        });
-//    }
-
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (parent == spinner)
@@ -265,14 +165,16 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
             String text = (String) spinner.getSelectedItem();
             if (text.equals("Road Works")) {
                 //getDataFeed(roadWorksURL);
-                //mMap.clear();
+                mMap.clear();
+                dataFeed = new DataFeed("roadWork", roadWorksURL);
 
             } else if (text.equals("Planned Road Works")) {
-                // mMap.clear();
+                 mMap.clear();
+                dataFeed = new DataFeed("plannedRoadWork", plannedRoadWorksURL);
                 //  getDataFeed(plannedRoadWorksURL);
             } else if (text.equals("Incidents")) {
-                // mMap.clear();
-                // getDataFeed(incidentsURL);
+                 mMap.clear();
+                dataFeed = new DataFeed("incident", incidentsURL);
             } else if (text.equals("Please select what to view on the map…")) {
                 // mMap.clear();
                 // Log.e("Spinner default", "clear map");
@@ -288,131 +190,53 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
     }
 
+    private static double parseStringToDouble(String value) {
+        return value == null || value.isEmpty() ? Double.NaN : Double.parseDouble(value);
+    }
     @Override
     public void update(Observable o, Object arg) {
 
 
-        ArrayList<RoadWorkItem> a = dataFeed.getList();
+        a = dataFeed.getList();
 
 
-//Freeze but not in main thread
-//        Handler uiThread = new Handler(Looper.getMainLooper());
-//        uiThread.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                for (RoadWorkItem rwi : a) {
-//                    Marker tmp;
-//                    double lt = parseStringToDouble(rwi.getLat());
-//                    double ln = parseStringToDouble(rwi.getLon());
-//
-//                    LatLng ltln = new LatLng(lt, ln);
-//
-//                    CustomInfoWindow customInfoWindow = new CustomInfoWindow(getContext());
-//                    tmp = mMap.addMarker(new MarkerOptions().position(ltln).title(rwi.getTitle()));
-//                    tmp.setTag(rwi);
-//
-//                    mMarker.add(tmp);
-//                    mMap.setInfoWindowAdapter(customInfoWindow);
-//                    mMap.setOnInfoWindowClickListener(MapFragment.this::onInfoWindowClick);
-//
-//                }
-//            }
-//        });
+        Handler uiThread = new Handler(Looper.getMainLooper());
+        uiThread.post(new Runnable() {
+            @Override
+            public void run() {
+
+//                adapter = new RoadWorkItemAdapter(getActivity(),
+//                        R.layout.map_fragment, a);
+//                listView.setAdapter(adapter);
+
+
+                Log.e("list", a.toString());
+
+                for (RoadWorkItem rwi : a) {
+                    Marker tmp;
+                    double lt = parseStringToDouble(rwi.getLat());
+                    double ln = parseStringToDouble(rwi.getLon());
+
+                    LatLng ltln = new LatLng(lt, ln);
+
+                    CustomInfoWindow customInfoWindow = new CustomInfoWindow(getContext());
+                    tmp = mMap.addMarker(new MarkerOptions().position(ltln).title(rwi.getTitle()));
+                    tmp.setTag(rwi);
+
+                    mMarker.add(tmp);
+                    mMap.setInfoWindowAdapter(customInfoWindow);
+                    mMap.setOnInfoWindowClickListener(MapFragment.this::onInfoWindowClick);
+
+                }
+
+            }
+        });
+
+
 
 
     }
 
 
-//--------------------------------------------------------------------------------------------------------------------------------------------------
-//    public void getDataFeed(String url) {
-//
-//        HandlerThread ht = new HandlerThread("MyHandlerThread");
-//        ht.start();
-//        Handler asyncHandler = new Handler(ht.getLooper()) {
-//            @Override
-//            public void handleMessage(@NonNull Message msg) {
-//                super.handleMessage(msg);
-//                Object response = msg.obj;
-//                //  doSomethingOnUi(response);
-//                //  dataInt.receiveData((String)response);
-//                if (url.equals(plannedRoadWorksURL)) {
-//                  //  displayPlannedRoadWorkMarkers((String)response);
-//                } else if (url.equals(roadWorksURL)) {
-//                  //  displayRoadWorksMarkers((String)response);
-//                } else if (url.equals(incidentsURL)) {
-//                   // displayIncidentsMarkers((String)response);
-//                }
-//            }
-//        };
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                Log.e("DataFeed", "Starting async thread");
-//                URL aurl;
-//                URLConnection yc;
-//                BufferedReader in = null;
-//                String inputLine = "";
-//                String result = "";
-//                try {
-//                    aurl = new URL(url);
-//                    yc = aurl.openConnection();
-//                    in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-//                    while ((inputLine = in.readLine()) != null) {
-//                        result = result + inputLine;
-//                    }
-//                    in.close();
-//                } catch (IOException ae) {
-//                    Log.e("run error", "ioexception in run");
-//                }
-//                Message message = new Message();
-//                message.obj = result;
-//
-//                asyncHandler.sendMessage(message);
-//
-//            }
-//        };
-//        asyncHandler.post(runnable);
-//    }
-
-//    private void displayPlannedRoadWorkMarkers(Object response) {
-//        Handler uiThread = new Handler(Looper.getMainLooper());
-//        uiThread.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                String str = (String)response;
-//                String replace = str.replace("null", "");
-//                Log.e("received data", replace);
-//                rdataToDisplay = replace;
-//                parseRoadData(replace,"plannedRoadWork");
-//            }
-//        });
-//    }
-//    private void displayRoadWorksMarkers(Object response) {
-//        Handler uiThread = new Handler(Looper.getMainLooper());
-//        uiThread.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                String str = (String)response;
-//                String replace = str.replace("null", "");
-//                Log.e("received data", replace);
-//                rdataToDisplay = replace;
-//                parseRoadData(replace,"roadWork");
-//            }
-//        });
-//    }
-//    private void displayIncidentsMarkers(Object response) {
-//        Handler uiThread = new Handler(Looper.getMainLooper());
-//        uiThread.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                String str = (String)response;
-//                String replace = str.replace("null", "");
-//                Log.e("received data", replace);
-//                rdataToDisplay = replace;
-//                parseRoadData(replace,"incidents");
-//            }
-//        });
-//    }
-//--------------------------------------------------------------------------------------------------------------------------------------------------
 
 }
