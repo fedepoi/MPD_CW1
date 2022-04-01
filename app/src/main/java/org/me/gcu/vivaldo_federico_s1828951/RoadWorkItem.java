@@ -48,7 +48,7 @@ public class RoadWorkItem {
 
         switch (this.type) {
             case "plannedRoadWork":
-
+                System.out.println("prw");
                 String noBR = this.description.replaceAll("(<br />)+", "+");
                 String[] split = noBR.trim().split("\\+");
 
@@ -57,10 +57,6 @@ public class RoadWorkItem {
                     setStartDate(split[0]);
                     setEndDate(split[1]);
                     setDesc(split[2]);
-//          String a= split[2].replaceFirst("Works:","+");
-//          String b =a.replaceFirst("Management:","+");
-//          String[] stringArray2=b.trim().split("\\+");
-//            Log.e("nobr->",Arrays.toString(stringArray2));
                 }
                 break;
             case "roadWork":

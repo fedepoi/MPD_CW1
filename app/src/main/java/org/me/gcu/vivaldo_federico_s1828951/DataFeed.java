@@ -27,20 +27,25 @@ import java.util.Observable;
 
 
 public class DataFeed extends Observable {
-    private String url;
+//    private final String url;
     private String result;
 
-    private ArrayList<RoadWorkItem> list;
-    private String type;
+    private final ArrayList<RoadWorkItem> list;
+   // private final String type;
 
     private RoadWorkItem roadWork;
 
 
-    public DataFeed(String type, String url) {
+    public DataFeed() {
         list = new ArrayList<RoadWorkItem>();
-        this.url = url;
-        this.type = type;
-        doSomeTaskAsync();
+       // doSomeTaskAsync();
+    }
+
+
+    public void fetchData(String type, String url){
+        Log.i("fetchagain","FetchAgain");
+        list.clear();
+        doSomeTaskAsync(type,url );
     }
 
 
@@ -79,37 +84,6 @@ public class DataFeed extends Observable {
 
                         list.add(roadWork);
                     }
-//                    Log.e("item",xpp.getName());
-//                         if (xpp.getName().equalsIgnoreCase("title")) {
-//                             Log.e("title",xpp.getName());
-//                             String temp = xpp.nextText();
-//                             roadWork.setTitle(temp);
-//                         } else if (xpp.getName().equalsIgnoreCase("description")) {
-//
-//                             String temp = xpp.nextText();
-//                             roadWork.setDesc(temp);
-//                         } else if (xpp.getName().equalsIgnoreCase("link")) {
-//
-//                             String temp = xpp.nextText();
-//                             roadWork.setLink(temp);
-//                         } else if (xpp.getName().equalsIgnoreCase("point")) {
-//
-//                             String temp = xpp.nextText();
-//                             roadWork.setPoint(temp);
-//                         } else if (xpp.getName().equalsIgnoreCase("author")) {
-//
-//                             String temp = xpp.nextText();
-//                             roadWork.setAuthor(temp);
-//                         } else if (xpp.getName().equalsIgnoreCase("comments")) {
-//
-//                             String temp = xpp.nextText();
-//                             roadWork.setComments(temp);
-//                         } else if (xpp.getName().equalsIgnoreCase("pubDate")) {
-//
-//                             String temp = xpp.nextText();
-//                             roadWork.setPubDate(temp);
-//                         }
-
 
                 }
 
@@ -117,11 +91,15 @@ public class DataFeed extends Observable {
                 eventType = xpp.next();
 
             }
+
+            Log.d("list", String.valueOf(list.size()));
+
         } catch (XmlPullParserException ae1) {
             Log.e("pull parser exception", "Parsing error" + ae1.toString());
         } catch (IOException ae1) {
             Log.e("io exception", "IO error during parsing");
         }
+        Log.e("updating observer", "sending new data to observer");
 
         setChanged();
         notifyObservers();
@@ -177,13 +155,14 @@ public class DataFeed extends Observable {
     }
 
 
-    public void doSomeTaskAsync() {
+    public void doSomeTaskAsync(String type, String url) {
         //   String result;
         HandlerThread ht = new HandlerThread("MyHandlerThread");
         ht.start();
         Handler asyncHandler = new Handler(ht.getLooper()) {
             @Override
             public void handleMessage(@NonNull Message msg) {
+                Log.e("async handler", "ready to parse");
                 super.handleMessage(msg);
                 Object response = msg.obj;
                 String str = (String) response;
