@@ -43,6 +43,7 @@ public class RoadWorkItemAdapter extends ArrayAdapter<RoadWorkItem> {
 
     public static class ViewHolder {
         public TextView display_title;
+        public  TextView display_type;
 
 
     }
@@ -56,6 +57,7 @@ public class RoadWorkItemAdapter extends ArrayAdapter<RoadWorkItem> {
                 holder = new ViewHolder();
 
                 holder.display_title = (TextView) vi.findViewById(R.id.listViewText);
+                holder.display_type=(TextView) vi.findViewById(R.id.rwi_type);
 
 
                 vi.setTag(holder);
@@ -65,6 +67,7 @@ public class RoadWorkItemAdapter extends ArrayAdapter<RoadWorkItem> {
 
 
             holder.display_title.setText(rwi.get(position).getTitle());
+            holder.display_type.setText(rwi.get(position).getType());
 
 
         } catch (Exception e) {

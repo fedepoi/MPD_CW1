@@ -21,15 +21,14 @@ public class CustomInfoWindow implements GoogleMap.InfoWindowAdapter {
     private final View mWindow;
     private Context mContext;
 
-    public CustomInfoWindow (Context context){
-        mContext=context;
-        mWindow= LayoutInflater.from(context).inflate(R.layout.custom_info_window, null);
+    public CustomInfoWindow(Context context) {
+        mContext = context;
+        mWindow = LayoutInflater.from(context).inflate(R.layout.custom_info_window, null);
 
     }
 
 
-
-    private void renderWindowContent(Marker marker, View view){
+    private void renderWindowContent(Marker marker, View view) {
         String title = marker.getTitle();
 
         RoadWorkItem rwi = (RoadWorkItem) marker.getTag();
@@ -40,29 +39,26 @@ public class CustomInfoWindow implements GoogleMap.InfoWindowAdapter {
 //        Button btn = (Button) view.findViewById(R.id.viewMoreBtn);
 
 
-
-
-        if(!title.equals("")){
+        if (!title.equals("")) {
             titleText.setText(title);
-             startText.setText(rwi.getStartDate());
-endText.setText(rwi.getEndDate());
+            startText.append(rwi.getStartDate().toString());
+            endText.append(rwi.getEndDate().toString());
         }
     }
 
     @Nullable
     @Override
     public View getInfoContents(@NonNull Marker marker) {
-        renderWindowContent(marker,mWindow);
+        renderWindowContent(marker, mWindow);
         return mWindow;
     }
 
     @Nullable
     @Override
     public View getInfoWindow(@NonNull Marker marker) {
-        renderWindowContent(marker,mWindow);
+        renderWindowContent(marker, mWindow);
         return mWindow;
     }
-
 
 
 }
