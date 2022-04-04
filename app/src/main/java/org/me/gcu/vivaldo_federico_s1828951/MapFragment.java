@@ -140,8 +140,21 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         TextView desc = (TextView) dialog.findViewById(R.id.dialog_description);
         RoadWorkItem rwi = (RoadWorkItem) marker.getTag();
         title.setText(rwi.getTitle());
-        startDate.append(rwi.getStartDate().toString());
-        endDate.append(rwi.getEndDate().toString());
+
+
+
+        if(rwi.getStartDate() !=null){
+            startDate.setText("Start date: "+rwi.getStartDate().toString());
+        } else { startDate.setText("Start Date not provided");}
+
+        if(rwi.getEndDate() !=null){
+            endDate.setText("End date: "+rwi.getEndDate().toString());
+        } else { endDate.setText("End date not provided");}
+
+
+
+//        startDate.append(rwi.getStartDate().toString());
+//        endDate.append(rwi.getEndDate().toString());
         link.append(rwi.getLink());
         pubDate.append(rwi.getPubDate());
         desc.append(rwi.getDesc());

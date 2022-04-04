@@ -2,6 +2,8 @@ package org.me.gcu.vivaldo_federico_s1828951;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +45,8 @@ public class RoadWorkItemAdapter extends ArrayAdapter<RoadWorkItem> {
 
     public static class ViewHolder {
         public TextView display_title;
-        public  TextView display_type;
+        public TextView display_type;
+        public TextView display_time;
 
 
     }
@@ -57,7 +60,8 @@ public class RoadWorkItemAdapter extends ArrayAdapter<RoadWorkItem> {
                 holder = new ViewHolder();
 
                 holder.display_title = (TextView) vi.findViewById(R.id.listViewText);
-                holder.display_type=(TextView) vi.findViewById(R.id.rwi_type);
+                holder.display_type = (TextView) vi.findViewById(R.id.rwi_type);
+                holder.display_time = (TextView) vi.findViewById(R.id.time);
 
 
                 vi.setTag(holder);
@@ -66,8 +70,23 @@ public class RoadWorkItemAdapter extends ArrayAdapter<RoadWorkItem> {
             }
 
 
+            Log.e("hh", String.valueOf(rwi.get(position).getDifferenceHours()));
+
+
+            if (rwi.get(position).getTimeDifference() >= 172800000) {  //48hh milliseconds
+                holder.display_time.setTextColor(Color.RED);
+                holder.display_time.setText("Be there for more than 48h");
+            } else if (rwi.get(position).getTimeDifference() >= 43200000) {  //12h in milliseconds
+                holder.display_type.setTextColor(Color.YELLOW);
+                holder.display_time.setText("Be there for more than 12h");
+            } else if (rwi.get(position).getTimeDifference() == 0) {
+                holder.display_type.setTextColor(Color.GREEN);
+                holder.display_time.setText("Leaving soon");
+            }
+
+
             holder.display_title.setText(rwi.get(position).getTitle());
-            holder.display_type.setText(rwi.get(position).getType());
+            holder.display_type.setText(rwi.get(position).getParsedType());
 
 
         } catch (Exception e) {

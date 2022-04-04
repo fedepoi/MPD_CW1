@@ -74,12 +74,12 @@ public class RoadWorkItem {
                 break;
             case "roadWork":
                 System.out.println("rw");
-                Log.d("road work desc ->", this.description);
+                // Log.d("road work desc ->", this.description);
 
 
                 String noBR2 = this.description.replaceAll("(<br />)+", "+");
                 String[] split2 = noBR2.trim().split("\\+");
-                Log.e("->", String.valueOf(split2.length));
+                //     Log.e("->", String.valueOf(split2.length));
                 if (split2.length >= 1 && split2.length <= 3) {
                     try {
                         String sd = split2[0].replace("Start Date: ", "");
@@ -95,7 +95,7 @@ public class RoadWorkItem {
                         e.printStackTrace();
                     }
 
-                    Log.i("->", Arrays.toString(split2));
+                    //    Log.i("->", Arrays.toString(split2));
 
 //                    try {
 //                        if (split2.length >= 3) {
@@ -118,6 +118,65 @@ public class RoadWorkItem {
         }
 
 
+    }
+
+
+    public String getParsedType() {
+
+        switch (this.type) {
+            case "roadWork":
+                return "Road Work";
+            case "plannedRoadWork":
+                return "Planned Road Work";
+            case "incident":
+                return "Incident";
+            default:
+                return "";
+        }
+
+
+    }
+
+    public long getTimeDifference() {
+
+        if (this.startDate != null && this.endDate != null) {
+
+            long timeDifference = this.endDate.getTime() - this.startDate.getTime();
+
+
+            return timeDifference;
+        } else
+            return 0;
+    }
+
+    public long getDifferenceHours() {
+
+        if (this.startDate != null && this.endDate != null) {
+
+            long timeDifference = this.endDate.getTime() - this.startDate.getTime();
+
+            long diffHour = (timeDifference
+                    / (1000 * 60 * 60))
+                    % 24;
+            return diffHour;
+        } else
+            return 0;
+    }
+
+
+    public long getDifferenceDays() {
+
+        if (this.startDate != null && this.endDate != null) {
+
+            long timeDifference = this.endDate.getTime() - this.startDate.getTime();
+
+            long diffDay
+                    = (timeDifference
+                    / (1000 * 60 * 60 * 24))
+                    % 365;
+            return diffDay;
+        } else
+            return 0;
     }
 
 
@@ -187,7 +246,9 @@ public class RoadWorkItem {
     }
 
     public Date getStartDate() {
-        Log.e("date->", String.valueOf(this.startDate.getTime()));
+        //  Log.e("date->", String.valueOf(this.startDate.getTime()));
+
+
         return this.startDate;
 
     }

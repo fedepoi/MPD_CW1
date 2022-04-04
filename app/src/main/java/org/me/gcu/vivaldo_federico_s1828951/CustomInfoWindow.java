@@ -41,8 +41,21 @@ public class CustomInfoWindow implements GoogleMap.InfoWindowAdapter {
 
         if (!title.equals("")) {
             titleText.setText(title);
-            startText.append(rwi.getStartDate().toString());
-            endText.append(rwi.getEndDate().toString());
+
+
+            if(rwi.getStartDate() !=null){
+                startText.setText(rwi.getStartDate().toString());
+            } else { startText.setText("Start date not provided");}
+
+            if(rwi.getEndDate() !=null){
+                endText.setText(rwi.getEndDate().toString());
+            } else { endText.setText("End date not provided");}
+
+
+
+
+//            startText.append(rwi.getStartDate().toString());
+//            endText.append(rwi.getEndDate().toString());
         }
     }
 

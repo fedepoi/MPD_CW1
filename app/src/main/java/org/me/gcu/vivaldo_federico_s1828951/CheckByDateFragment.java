@@ -24,9 +24,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
@@ -73,9 +75,24 @@ public class CheckByDateFragment extends Fragment implements Observer {
                 TextView link = (TextView) dialog.findViewById(R.id.dialog_link);
                 TextView pubDate = (TextView) dialog.findViewById(R.id.dialog_pubDate);
                 TextView desc = (TextView) dialog.findViewById(R.id.dialog_description);
+
+
+
+
                 title.setText(rwi.getTitle());
-                startDate.append(rwi.getStartDate().toString());
-                endDate.append(rwi.getEndDate().toString());
+
+
+                if(rwi.getStartDate() !=null){
+                    startDate.setText("Start date: "+rwi.getStartDate().toString());
+                } else { startDate.setText("Start date not provided");}
+
+                if(rwi.getEndDate() !=null){
+                    endDate.setText("End date: "+rwi.getEndDate().toString());
+                } else { endDate.setText("End date not provided");}
+
+
+//                startDate.append(rwi.getStartDate().toString());
+//                endDate.append(rwi.getEndDate().toString());
                 link.append(rwi.getLink());
                 pubDate.append(rwi.getPubDate());
                 desc.append(rwi.getDesc());
@@ -130,9 +147,34 @@ public class CheckByDateFragment extends Fragment implements Observer {
 
 
     private void updateLabel() {
-        String myFormat = "MM/dd/yy";
+        ArrayList<RoadWorkItem> filteredArray= new ArrayList<RoadWorkItem>();
+        String myFormat = "MM-dd-yy";
         SimpleDateFormat dateFormat = new SimpleDateFormat(myFormat, Locale.ENGLISH);
         textInput.setText(dateFormat.format(myCalendar.getTime()));
+
+        Date currentDate = myCalendar.getTime();
+        for (RoadWorkItem rwi : all){
+            SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMMM yyyy - HH:mm");
+            Date date= null;
+
+            if(rwi.getStartDate()!=null) {
+                Log.e("start date debug", rwi.getStartDate().toString());
+                date = rwi.getStartDate();
+
+                if(currentDate.before(date)){
+                filteredArray.add(rwi);
+            }
+
+            }
+        }
+
+        Log.d("old", String.valueOf(all.size()));
+        Log.d("new array length", String.valueOf(filteredArray.size()));
+        adapter = new RoadWorkItemAdapter(getActivity(),
+                R.layout.map_fragment, filteredArray);
+        listView.setAdapter(adapter);
+
+
     }
 
 
