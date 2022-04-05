@@ -77,11 +77,11 @@ public class RoadWorkItemAdapter extends ArrayAdapter<RoadWorkItem> {
                 holder.display_time.setTextColor(Color.RED);
                 holder.display_time.setText("Be there for more than 48h");
             } else if (rwi.get(position).getTimeDifference() >= 43200000) {  //12h in milliseconds
-                holder.display_type.setTextColor(Color.YELLOW);
+                holder.display_time.setTextColor(Color.YELLOW);
                 holder.display_time.setText("Be there for more than 12h");
             } else if (rwi.get(position).getTimeDifference() == 0) {
-                holder.display_type.setTextColor(Color.GREEN);
-                holder.display_time.setText("Leaving soon");
+                holder.display_time.setTextColor(Color.GREEN);
+                holder.display_time.setText("Be there for few hours");
             }
 
 

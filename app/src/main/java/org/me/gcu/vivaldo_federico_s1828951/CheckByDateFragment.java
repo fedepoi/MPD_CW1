@@ -77,18 +77,20 @@ public class CheckByDateFragment extends Fragment implements Observer {
                 TextView desc = (TextView) dialog.findViewById(R.id.dialog_description);
 
 
-
-
                 title.setText(rwi.getTitle());
 
 
-                if(rwi.getStartDate() !=null){
-                    startDate.setText("Start date: "+rwi.getStartDate().toString());
-                } else { startDate.setText("Start date not provided");}
+                if (rwi.getStartDate() != null) {
+                    startDate.setText("Start date: " + rwi.getStartDate().toString());
+                } else {
+                    startDate.setText("Start date not provided");
+                }
 
-                if(rwi.getEndDate() !=null){
-                    endDate.setText("End date: "+rwi.getEndDate().toString());
-                } else { endDate.setText("End date not provided");}
+                if (rwi.getEndDate() != null) {
+                    endDate.setText("End date: " + rwi.getEndDate().toString());
+                } else {
+                    endDate.setText("End date not provided");
+                }
 
 
 //                startDate.append(rwi.getStartDate().toString());
@@ -147,23 +149,23 @@ public class CheckByDateFragment extends Fragment implements Observer {
 
 
     private void updateLabel() {
-        ArrayList<RoadWorkItem> filteredArray= new ArrayList<RoadWorkItem>();
+        ArrayList<RoadWorkItem> filteredArray = new ArrayList<RoadWorkItem>();
         String myFormat = "MM-dd-yy";
         SimpleDateFormat dateFormat = new SimpleDateFormat(myFormat, Locale.ENGLISH);
         textInput.setText(dateFormat.format(myCalendar.getTime()));
 
         Date currentDate = myCalendar.getTime();
-        for (RoadWorkItem rwi : all){
+        for (RoadWorkItem rwi : all) {
             SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMMM yyyy - HH:mm");
-            Date date= null;
+            Date date = null;
 
-            if(rwi.getStartDate()!=null) {
+            if (rwi.getStartDate() != null) {
                 Log.e("start date debug", rwi.getStartDate().toString());
                 date = rwi.getStartDate();
 
-                if(currentDate.before(date)){
-                filteredArray.add(rwi);
-            }
+                if (currentDate.before(date)) {
+                    filteredArray.add(rwi);
+                }
 
             }
         }
@@ -176,7 +178,6 @@ public class CheckByDateFragment extends Fragment implements Observer {
 
 
     }
-
 
 
     @Override
@@ -214,7 +215,12 @@ public class CheckByDateFragment extends Fragment implements Observer {
                         R.layout.map_fragment, all);
                 listView.setAdapter(adapter);
 
-                loading.setVisibility(View.GONE);
+
+                if (dataFeed1.getFinished()&& dataFeed2.getFinished()&& dataFeed3.getFinished()) {
+                    loading.setVisibility(View.GONE);
+                }
+
+                // loading.setVisibility(View.GONE);
             }
         });
 

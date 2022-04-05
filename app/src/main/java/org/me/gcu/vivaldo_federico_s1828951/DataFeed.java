@@ -24,28 +24,51 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Observable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class DataFeed extends Observable {
-//    private final String url;
+    //    private final String url;
     private String result;
 
     private final ArrayList<RoadWorkItem> list;
-   // private final String type;
+    // private final String type;
+    private boolean finished;
 
     private RoadWorkItem roadWork;
+    ScheduledExecutorService scheduleTaskExecutor;
 
 
     public DataFeed() {
         list = new ArrayList<RoadWorkItem>();
-       // doSomeTaskAsync();
+        // doSomeTaskAsync();
     }
 
 
-    public void fetchData(String type, String url){
-        Log.i("fetchagain","FetchAgain");
+    public void setFinished(boolean f) {
+        this.finished = f;
+    }
+
+    public boolean getFinished() {
+        return this.finished;
+    }
+
+
+    public void fetchData(String type, String url) {
+        Log.i("fetchagain", "FetchAgain");
         list.clear();
-        doSomeTaskAsync(type,url );
+        scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
+        this.finished = false;
+        scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
+            public void run() {
+                Log.d("DataFeed", "Refreshing Data feed");
+                doSomeTaskAsync(type, url);
+            }
+        }, 0, 15, TimeUnit.MINUTES);   //Refresh data feed every 15 min
+
+
     }
 
 
@@ -101,6 +124,7 @@ public class DataFeed extends Observable {
         }
         Log.e("updating observer", "sending new data to observer");
 
+        setFinished(true);
         setChanged();
         notifyObservers();
         System.out.println("End document");

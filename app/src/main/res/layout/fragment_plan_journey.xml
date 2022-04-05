@@ -3,11 +3,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@android:color/holo_blue_light"
     >
 
     <TextView
+        android:id="@+id/check_by_road_heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Plan your journey"/>
+        android:padding="10dp"
+        android:text="Plan your journey"
+        android:textColor="#000000"
+        android:textSize="20sp" />
+
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:text="Check what roadworks will be in place on the day of your trip."
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        />
+
+    <EditText
+        android:id="@+id/plan_journey_date_picker"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:cursorVisible="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:hint="Enter a date ..."
+        android:paddingBottom="10dp" />
+
+    <ListView
+        android:id="@+id/journey_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp" />
 </LinearLayout>

@@ -95,10 +95,12 @@ public class MapsActivity extends AppCompatActivity implements Observer, Navigat
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment2).commit();
                 break;
             case R.id.road:
-                // do your code
+                Fragment fragment3 = new CheckByRoadFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment3).commit();
                 break;
             case R.id.plan:
-                // do your code
+                Fragment fragment4 = new PlanJourneyFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment4).commit();
                 break;
         }
         return true;
