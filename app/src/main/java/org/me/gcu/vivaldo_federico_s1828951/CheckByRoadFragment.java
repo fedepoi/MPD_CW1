@@ -80,15 +80,16 @@ public class CheckByRoadFragment extends Fragment implements Observer {
 
                 title.setText(rwi.getTitle());
 
+                SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMMM yyyy - HH:mm");
 
                 if (rwi.getStartDate() != null) {
-                    startDate.setText("Start date: " + rwi.getStartDate().toString());
+                    startDate.setText("Start date: " + formatter.format(rwi.getStartDate()));
                 } else {
                     startDate.setText("Start date not provided");
                 }
 
                 if (rwi.getEndDate() != null) {
-                    endDate.setText("End date: " + rwi.getEndDate().toString());
+                    endDate.setText("End date: " + formatter.format(rwi.getEndDate()));
                 } else {
                     endDate.setText("End date not provided");
                 }

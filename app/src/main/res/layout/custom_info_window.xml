@@ -9,7 +9,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:gravity="center"
+        >
 
         <TextView
             android:id="@+id/infoWindowTitleText"
@@ -21,14 +24,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="Start date: " />
+           />
 
         <TextView
             android:id="@+id/infoWindowEndDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="End date: " />
+           />
 
 
         <TextView

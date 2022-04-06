@@ -34,7 +34,7 @@ public class PlanJourneyFragment extends Fragment implements Observer {
 
     ListView listView;
     ArrayAdapter adapter;
-   // private String roadWorksURL = "https://trafficscotland.org/rss/feeds/roadworks.aspx";
+    // private String roadWorksURL = "https://trafficscotland.org/rss/feeds/roadworks.aspx";
     private String plannedRoadWorksURL = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
     private ArrayList<RoadWorkItem> a;
     private ArrayList<RoadWorkItem> all;
@@ -67,8 +67,6 @@ public class PlanJourneyFragment extends Fragment implements Observer {
         dataFeed.addObserver(this);
 
 
-
-
         listView = view.findViewById(R.id.journey_list);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -88,15 +86,16 @@ public class PlanJourneyFragment extends Fragment implements Observer {
 
                 title.setText(rwi.getTitle());
 
+                SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMMM yyyy - HH:mm");
 
                 if (rwi.getStartDate() != null) {
-                    startDate.setText("Start date: " + rwi.getStartDate().toString());
+                    startDate.setText("Start date: " + formatter.format(rwi.getStartDate()));
                 } else {
                     startDate.setText("Start date not provided");
                 }
 
                 if (rwi.getEndDate() != null) {
-                    endDate.setText("End date: " + rwi.getEndDate().toString());
+                    endDate.setText("End date: " + formatter.format(rwi.getEndDate()));
                 } else {
                     endDate.setText("End date not provided");
                 }
@@ -119,39 +118,30 @@ public class PlanJourneyFragment extends Fragment implements Observer {
         });
 
 
-
-
-
         return view;
     }
 
 
     private void updateLabel() {
-       ArrayList<RoadWorkItem> filteredArray = new ArrayList<RoadWorkItem>();
+        ArrayList<RoadWorkItem> filteredArray = new ArrayList<RoadWorkItem>();
         String myFormat = "MM-dd-yy";
         SimpleDateFormat dateFormat = new SimpleDateFormat(myFormat, Locale.ENGLISH);
         datePicker.setText(dateFormat.format(myCalendar.getTime()));
 
         Date currentDate = myCalendar.getTime();
         for (RoadWorkItem rwi : all) {
-            SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMMM yyyy - HH:mm");
-            Date date = null;
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+            Date date;
 
             if (rwi.getStartDate() != null) {
-                Log.e("start date debug", rwi.getStartDate().toString());
                 date = rwi.getStartDate();
-
-                if (currentDate.before(date)) {
+                if (formatter.format(currentDate).equals(formatter.format(date))) {
                     filteredArray.add(rwi);
                 }
 
             }
         }
 
-
-        Log.d("running update","hey");
-        Log.d("road", String.valueOf(filteredArray.size()));
-        Log.d("road", String.valueOf(all.size()));
         adapter = new RoadWorkItemAdapter(getActivity(),
                 R.layout.map_fragment, filteredArray);
         listView.setAdapter(adapter);
@@ -161,7 +151,7 @@ public class PlanJourneyFragment extends Fragment implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        a=dataFeed.getList();
+        a = dataFeed.getList();
         all.addAll(a);
     }
 }

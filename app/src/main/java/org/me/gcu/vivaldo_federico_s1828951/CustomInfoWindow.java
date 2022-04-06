@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
+import java.text.SimpleDateFormat;
+
 
 public class CustomInfoWindow implements GoogleMap.InfoWindowAdapter {
 
@@ -42,13 +44,14 @@ public class CustomInfoWindow implements GoogleMap.InfoWindowAdapter {
         if (!title.equals("")) {
             titleText.setText(title);
 
+            SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMMM yyyy - HH:mm");
 
             if(rwi.getStartDate() !=null){
-                startText.setText(rwi.getStartDate().toString());
+                startText.setText("Start date: "+formatter.format(rwi.getStartDate()));
             } else { startText.setText("Start date not provided");}
 
             if(rwi.getEndDate() !=null){
-                endText.setText(rwi.getEndDate().toString());
+                endText.setText("End date: "+formatter.format(rwi.getEndDate()));
             } else { endText.setText("End date not provided");}
 
 

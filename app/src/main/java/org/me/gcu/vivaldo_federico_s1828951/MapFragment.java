@@ -49,6 +49,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -142,13 +143,14 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         title.setText(rwi.getTitle());
 
 
+        SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMMM yyyy - HH:mm");
 
         if(rwi.getStartDate() !=null){
-            startDate.setText("Start date: "+rwi.getStartDate().toString());
+            startDate.setText("Start date: "+formatter.format(rwi.getStartDate()));
         } else { startDate.setText("Start Date not provided");}
 
         if(rwi.getEndDate() !=null){
-            endDate.setText("End date: "+rwi.getEndDate().toString());
+            endDate.setText("End date: "+formatter.format(rwi.getEndDate()));
         } else { endDate.setText("End date not provided");}
 
 
