@@ -11,7 +11,10 @@ import androidx.fragment.app.Fragment;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import android.os.Handler;
@@ -23,6 +26,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -47,17 +51,14 @@ import java.util.Observer;
 
 public class MapsActivity extends AppCompatActivity implements Observer, NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawer;
-
-    //    private String plannedRoadWorksURL = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
-//    private String roadWorksURL = "https://trafficscotland.org/rss/feeds/roadworks.aspx";
-//    private String incidentsURL = "https://trafficscotland.org/rss/feeds/currentincidents.aspx";
     private ArrayList<RoadWorkItem> plannedRoadWorksArray = new ArrayList<RoadWorkItem>();
     private ArrayList<RoadWorkItem> roadWorksArray = new ArrayList<RoadWorkItem>();
     private ArrayList<RoadWorkItem> incidentsArray = new ArrayList<RoadWorkItem>();
 
 
     private ListController l;
-    private ProgressBar loading;
+
+    private RelativeLayout loadingLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,30 +67,39 @@ public class MapsActivity extends AppCompatActivity implements Observer, Navigat
         super.onCreate(savedInstanceState);
 
 
-        setContentView(R.layout.activity_maps);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        if (!isNetworkAvailable()) {
+            setContentView(R.layout.general_error);
+        } else {
 
-        drawer = findViewById(R.id.drawer_layout);
+            setContentView(R.layout.activity_maps);
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
 
-        NavigationView navView = findViewById(R.id.nav_view);
-        navView.setNavigationItemSelectedListener(MapsActivity.this);
+            drawer = findViewById(R.id.drawer_layout);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(MapsActivity.this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+            NavigationView navView = findViewById(R.id.nav_view);
+            navView.setNavigationItemSelectedListener(MapsActivity.this);
+
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(MapsActivity.this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.addDrawerListener(toggle);
+            toggle.syncState();
+
+            l = new ListController(MapsActivity.this);
+            l.addObserver(this);
 
 
-        //Fragment fragment = new org.me.gcu.vivaldo_federico_s1828951.MapFragment();
-        //  getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+            this.loadingLayout = findViewById(R.id.loading_container);
 
-        l = new ListController(MapsActivity.this);
-        l.addObserver(this);
-
-         loading = findViewById(R.id.main_loading);
-        loading.setVisibility(View.VISIBLE);
+        }
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo;
+        activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -127,11 +137,18 @@ public class MapsActivity extends AppCompatActivity implements Observer, Navigat
         plannedRoadWorksArray = l.getPlannedList();
         incidentsArray = l.getIncidentsList();
 
-        if(l.getFinished()){
-
-            Fragment fragment = new org.me.gcu.vivaldo_federico_s1828951.MapFragment(this.l);
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+        if (l.getFinished()) {
+            Handler uiThread = new Handler(Looper.getMainLooper());
+            uiThread.post(new Runnable() {
+                @Override
+                public void run() {
+                    loadingLayout.setVisibility(View.GONE);
+                    Fragment fragment = new org.me.gcu.vivaldo_federico_s1828951.MapFragment(l);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+                }
+            });
         }
+
 
     }
 
