@@ -75,12 +75,7 @@
             android:gravity="center"
             android:text="Filter" />
 
-        <ProgressBar
-            android:id="@+id/check_by_road_loading"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_gravity="center"
-            android:padding="5dp" />
+
 
 
 

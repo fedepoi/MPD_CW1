@@ -32,12 +32,12 @@
        android:paddingBottom="10dp" />
 
 
-    <ProgressBar
-        android:id="@+id/check_by_date_loading"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_gravity="center"
-        android:padding="5dp" />
+<!--    <ProgressBar-->
+    <!--        android:id="@+id/check_by_date_loading"-->
+    <!--        android:layout_width="35dp"-->
+    <!--        android:layout_height="35dp"-->
+    <!--        android:layout_gravity="center"-->
+    <!--        android:padding="5dp" />-->
 
 </LinearLayout>
 

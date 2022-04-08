@@ -33,15 +33,13 @@ import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
-public class CheckByDateFragment extends Fragment implements Observer {
+public class CheckByDateFragment extends Fragment
+        //implements Observer
+        {
 
     ListView listView;
     ArrayAdapter adapter;
-    private String plannedRoadWorksURL = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
-    private String roadWorksURL = "https://trafficscotland.org/rss/feeds/roadworks.aspx";
-    private String incidentsURL = "https://trafficscotland.org/rss/feeds/currentincidents.aspx";
     private EditText textInput;
-    private ProgressBar loading;
     final Calendar myCalendar = Calendar.getInstance();
 
 
@@ -49,18 +47,28 @@ public class CheckByDateFragment extends Fragment implements Observer {
     private ArrayList<RoadWorkItem> b;
     private ArrayList<RoadWorkItem> c;
     private ArrayList<RoadWorkItem> all;
-    private DataFeed dataFeed1;
-    private DataFeed dataFeed2;
-    private DataFeed dataFeed3;
+    private ListController l ;
 
-
+public CheckByDateFragment(ListController l){
+    this.l=l;
+}
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_check_by_date, container, false);
-        adapter = new ArrayAdapter<RoadWorkItem>(getContext(),
-                R.layout.fragment_check_by_date, all);
+
+
+        a = l.getPlannedList();
+        b = l.getRoadWorkItemsList();
+        c = l.getIncidentsList();
+        all= l.getAllList();
 
         listView = view.findViewById(R.id.mobile_list);
+
+        adapter = new RoadWorkItemAdapter(getActivity(),
+                R.layout.fragment_check_by_date, all);
+        listView.setAdapter(adapter);
+
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -110,22 +118,6 @@ public class CheckByDateFragment extends Fragment implements Observer {
             }
         });
 
-
-        all = new ArrayList<RoadWorkItem>();
-
-        dataFeed1 = new DataFeed();
-        dataFeed1.fetchData("plannedRoadWork", plannedRoadWorksURL);
-        dataFeed1.addObserver(this);
-
-        dataFeed2 = new DataFeed();
-        dataFeed2.fetchData("roadWork", roadWorksURL);
-        dataFeed2.addObserver(this);
-        dataFeed3 = new DataFeed();
-        dataFeed3.fetchData("incident", incidentsURL);
-        dataFeed3.addObserver(this);
-
-
-        loading = view.findViewById(R.id.check_by_date_loading);
         textInput = view.findViewById(R.id.check_by_date_text_input);
         DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
 
@@ -144,7 +136,6 @@ public class CheckByDateFragment extends Fragment implements Observer {
                 new DatePickerDialog(getContext(), date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
-        loading.setVisibility(View.VISIBLE);
         return view;
     }
 
@@ -157,14 +148,14 @@ public class CheckByDateFragment extends Fragment implements Observer {
 
         Date currentDate = myCalendar.getTime();
         for (RoadWorkItem rwi : all) {
-            SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMMM yyyy - HH:mm");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
             Date date = null;
 
             if (rwi.getStartDate() != null) {
                 Log.e("start date debug", rwi.getStartDate().toString());
                 date = rwi.getStartDate();
 
-                if (currentDate.before(date)) {
+                if (formatter.format(currentDate).equals(formatter.format(date))) {
                     filteredArray.add(rwi);
                 }
 
@@ -174,54 +165,27 @@ public class CheckByDateFragment extends Fragment implements Observer {
         Log.d("old", String.valueOf(all.size()));
         Log.d("new array length", String.valueOf(filteredArray.size()));
         adapter = new RoadWorkItemAdapter(getActivity(),
-                R.layout.map_fragment, filteredArray);
+                R.layout.fragment_check_by_date, filteredArray);
         listView.setAdapter(adapter);
 
 
     }
 
-
-    @Override
-    public void update(Observable o, Object arg) {
-
-        Log.e("updating", "received update from df");
-        Log.d("arg", o.toString());
-        //   Log.d("arg1", arg.toString());
-        ArrayList<RoadWorkItem> tmp;
-
-
-        a = dataFeed1.getList();
-        b = dataFeed2.getList();
-        c = dataFeed3.getList();
-        if (a != null) {
-            all.addAll(a);
-        }
-
-        if (b != null) {
-            all.addAll(b);
-        }
-        if (c != null) {
-            all.addAll(c);
-        }
-
-
+    public void updateView(ListController l) {
+        a = l.getPlannedList();
+        b = l.getRoadWorkItemsList();
+        c = l.getIncidentsList();
+        all= l.getAllList();
         Handler uiThread = new Handler(Looper.getMainLooper());
         uiThread.post(new Runnable() {
             @Override
             public void run() {
-                loading.setVisibility(View.VISIBLE);
+              //  loading.setVisibility(View.VISIBLE);
 
                 Log.e("UI", "updating UI");
                 adapter = new RoadWorkItemAdapter(getActivity(),
-                        R.layout.map_fragment, all);
+                        R.layout.fragment_check_by_date, all);
                 listView.setAdapter(adapter);
-
-
-                if (dataFeed1.getFinished()&& dataFeed2.getFinished()&& dataFeed3.getFinished()) {
-                    loading.setVisibility(View.GONE);
-                }
-
-                // loading.setVisibility(View.GONE);
             }
         });
 

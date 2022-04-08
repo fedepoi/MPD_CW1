@@ -57,7 +57,7 @@ public class DataFeed extends Observable {
 
 
     public void fetchData(String type, String url) {
-        Log.i("fetchagain", "FetchAgain");
+      //  Log.i("fetchagain", "FetchAgain");
         list.clear();
         scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
         this.finished = false;
@@ -80,6 +80,7 @@ public class DataFeed extends Observable {
 
         try {
             Log.e("-------------------------------------->", str);
+            list.clear();
 
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -115,7 +116,7 @@ public class DataFeed extends Observable {
 
             }
 
-            Log.d("list", String.valueOf(list.size()));
+            //Log.d("list", String.valueOf(list.size()));
 
         } catch (XmlPullParserException ae1) {
             Log.e("pull parser exception", "Parsing error" + ae1.toString());
@@ -144,7 +145,7 @@ public class DataFeed extends Observable {
                 continue;
             }
             if (parser.getName().equalsIgnoreCase("title")) {
-                Log.e("title", parser.getName());
+              //  Log.e("title", parser.getName());
                 String temp = parser.nextText();
                 roadWork.setTitle(temp);
             } else if (parser.getName().equalsIgnoreCase("description")) {

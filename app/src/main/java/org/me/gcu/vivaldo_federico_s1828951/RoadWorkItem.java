@@ -1,5 +1,7 @@
 package org.me.gcu.vivaldo_federico_s1828951;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import java.text.ParseException;
@@ -7,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
-public class RoadWorkItem {
+public class RoadWorkItem  {
     private String title;
     private String description;
     private String link;
@@ -24,7 +26,7 @@ public class RoadWorkItem {
     private String type;
 
 
-    public RoadWorkItem(String type) {
+    public RoadWorkItem(String type)  {
         this.title = "";
         this.description = "";
         this.link = "";
@@ -61,7 +63,7 @@ public class RoadWorkItem {
                         SimpleDateFormat dateFormat = new SimpleDateFormat("E, dd MMMM yyyy - HH:mm");
                         Date newSd = dateFormat.parse(sd);
                         Date newEd = dateFormat.parse(ed);
-                        Log.d("->", String.valueOf(newSd));
+                        //   Log.d("->", String.valueOf(newSd));
 
                         setStartDate(newSd);
                         setEndDate(newEd);
@@ -73,7 +75,7 @@ public class RoadWorkItem {
                 }
                 break;
             case "roadWork":
-                System.out.println("rw");
+                // System.out.println("rw");
                 // Log.d("road work desc ->", this.description);
 
 
@@ -87,7 +89,7 @@ public class RoadWorkItem {
                         SimpleDateFormat dateFormat = new SimpleDateFormat("E, dd MMMM yyyy - HH:mm");
                         Date newSd = dateFormat.parse(sd);
                         Date newEd = dateFormat.parse(ed);
-                        Log.d("->", String.valueOf(newSd));
+                        //  Log.d("->", String.valueOf(newSd));
 
                         setStartDate(newSd);
                         setEndDate(newEd);
@@ -109,8 +111,8 @@ public class RoadWorkItem {
 
                 break;
             case "incident":
-                Log.d("incident ->", this.description);
-                System.out.println("inc");
+                // Log.d("incident ->", this.description);
+                // System.out.println("inc");
 //                String noBR3 = this.description.replaceAll("(<br />)+", "+");
 //                String[] split3 = noBR3.trim().split("\\+");
 //                Log.e("->", String.valueOf(split3.length));
@@ -275,6 +277,7 @@ public class RoadWorkItem {
     public String getType() {
         return this.type;
     }
+
 
 
 }

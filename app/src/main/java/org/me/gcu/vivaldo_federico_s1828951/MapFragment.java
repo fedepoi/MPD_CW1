@@ -56,21 +56,23 @@ import java.util.Observer;
 
 import com.google.android.gms.maps.SupportMapFragment;
 
-public class MapFragment extends Fragment implements Observer, OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener,
+public class MapFragment extends Fragment implements
+        //Observer,
+        OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener,
         AdapterView.OnItemSelectedListener {
 
 
     private GoogleMap mMap;
-    private String plannedRoadWorksURL = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
-    private String roadWorksURL = "https://trafficscotland.org/rss/feeds/roadworks.aspx";
-    private String incidentsURL = "https://trafficscotland.org/rss/feeds/currentincidents.aspx";
+//    private String plannedRoadWorksURL = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
+//    private String roadWorksURL = "https://trafficscotland.org/rss/feeds/roadworks.aspx";
+//    private String incidentsURL = "https://trafficscotland.org/rss/feeds/currentincidents.aspx";
 
 
-    private DataFeed dataFeed;
+   // private DataFeed dataFeed;
 
     private Spinner spinner;
     private TextView heading;
-    private ProgressBar loading;
+   // private ProgressBar loading;
 
 
     private ArrayList<RoadWorkItem> a;
@@ -79,6 +81,13 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
 
     private ArrayList<Marker> mMarker = new ArrayList<Marker>();
+
+    private ListController l ;
+
+    public MapFragment(ListController l){
+        this.l=l;
+        Log.e("new ->", String.valueOf(l.getPlannedList().size()));
+    }
 
 
     @Override
@@ -99,8 +108,8 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 //
 
           heading= view.findViewById(R.id.map_heading);
-          loading=view.findViewById(R.id.loading);
-          loading.setVisibility(View.VISIBLE);
+//          loading=view.findViewById(R.id.loading);
+//          loading.setVisibility(View.VISIBLE);
 
         return view;
     }
@@ -114,9 +123,13 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(glasgow, 12.0f));
         mMap.getUiSettings().setZoomControlsEnabled(true);
         //mMap.addMarker(new MarkerOptions().position(glasgow).title("Marker in Sydney"));
-        dataFeed = new DataFeed();
-        dataFeed.fetchData("roadWork", roadWorksURL);
-        dataFeed.addObserver(this);
+
+
+//        dataFeed = new DataFeed();
+//        dataFeed.fetchData("roadWork", roadWorksURL);
+//        dataFeed.addObserver(this);
+
+        updateMap(l.getRoadWorkItemsList());
 
         heading.setText("Current roadworks");
 
@@ -180,29 +193,32 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
             String text = (String) spinner.getSelectedItem();
             switch (text) {
                 case "Road Works":
-                    loading.setVisibility(View.VISIBLE);
+                   // loading.setVisibility(View.VISIBLE);
                     heading.setText("Current roadworks");
                     mMap.clear();
-                    dataFeed= new DataFeed();
-                    dataFeed.addObserver(this);
-                    dataFeed.fetchData("roadWork", roadWorksURL);
+//                    dataFeed= new DataFeed();
+//                    dataFeed.addObserver(this);
+//                    dataFeed.fetchData("roadWork", roadWorksURL);
+                    updateMap(l.getRoadWorkItemsList());
                     Log.e("->", "loading roadworks");
                     break;
                 case "Planned Road Works":
-                    loading.setVisibility(View.VISIBLE);
+                    //loading.setVisibility(View.VISIBLE);
                     heading.setText("Planned roadworks");
                     mMap.clear();
-                    dataFeed= new DataFeed();
-                    dataFeed.addObserver(this);
-                    this.dataFeed.fetchData("plannedRoadWork", plannedRoadWorksURL);
+                    updateMap(l.getPlannedList());
+//                    dataFeed= new DataFeed();
+//                    dataFeed.addObserver(this);
+//                    this.dataFeed.fetchData("plannedRoadWork", plannedRoadWorksURL);
                     break;
                 case "Incidents":
-                    loading.setVisibility(View.VISIBLE);
+                 //   loading.setVisibility(View.VISIBLE);
                     heading.setText("Current incidents");
                     mMap.clear();
-                    dataFeed= new DataFeed();
-                    dataFeed.addObserver(this);
-                    dataFeed.fetchData("incident", incidentsURL);
+                    updateMap(l.getIncidentsList());
+//                    dataFeed= new DataFeed();
+//                    dataFeed.addObserver(this);
+//                    dataFeed.fetchData("incident", incidentsURL);
                     Log.e("->", "loading incidents");
                     break;
                 case "Please select what to view on the map…":
@@ -221,11 +237,11 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
         return value == null || value.isEmpty() ? Double.NaN : Double.parseDouble(value);
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
-        Log.e("updating", "received update from df");
-        Log.d("arg", o.toString());
-        a = dataFeed.getList();
+
+    public void updateMap(ArrayList<RoadWorkItem> a) {
+//        Log.e("updating", "received update from df");
+//        Log.d("arg", o.toString());
+        //a = dataFeed.getList();
 
 
         Handler uiThread = new Handler(Looper.getMainLooper());
@@ -255,12 +271,51 @@ public class MapFragment extends Fragment implements Observer, OnMapReadyCallbac
 
                 }
 
-                loading.setVisibility(View.GONE);
+              //  loading.setVisibility(View.GONE);
             }
         });
 
 
     }
 
-
+//    @Override
+//    public void update(Observable o, Object arg) {
+//        Log.e("updating", "received update from df");
+//        Log.d("arg", o.toString());
+//        a = dataFeed.getList();
+//
+//
+//        Handler uiThread = new Handler(Looper.getMainLooper());
+//        uiThread.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                Log.e("UI", "updating UI");
+////                adapter = new RoadWorkItemAdapter(getActivity(),
+////                        R.layout.map_fragment, a);
+////                listView.setAdapter(adapter);
+//
+//
+//                for (RoadWorkItem rwi : a) {
+//                    Marker tmp;
+//                    double lt = parseStringToDouble(rwi.getLat());
+//                    double ln = parseStringToDouble(rwi.getLon());
+//
+//                    LatLng ltln = new LatLng(lt, ln);
+//
+//                    CustomInfoWindow customInfoWindow = new CustomInfoWindow(getContext());
+//                    tmp = mMap.addMarker(new MarkerOptions().position(ltln).title(rwi.getTitle()));
+//                    tmp.setTag(rwi);
+//
+//                    mMarker.add(tmp);
+//                    mMap.setInfoWindowAdapter(customInfoWindow);
+//                    mMap.setOnInfoWindowClickListener(MapFragment.this::onInfoWindowClick);
+//
+//                }
+//
+//                loading.setVisibility(View.GONE);
+//            }
+//        });
+//
+//
+//    }
 }

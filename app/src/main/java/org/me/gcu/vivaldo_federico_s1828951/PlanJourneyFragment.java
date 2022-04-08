@@ -26,7 +26,9 @@ import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
-public class PlanJourneyFragment extends Fragment implements Observer {
+public class PlanJourneyFragment extends Fragment
+//        implements Observer
+{
 
     private EditText datePicker;
     final Calendar myCalendar = Calendar.getInstance();
@@ -35,10 +37,16 @@ public class PlanJourneyFragment extends Fragment implements Observer {
     ListView listView;
     ArrayAdapter adapter;
     // private String roadWorksURL = "https://trafficscotland.org/rss/feeds/roadworks.aspx";
-    private String plannedRoadWorksURL = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
+    //  private String plannedRoadWorksURL = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
     private ArrayList<RoadWorkItem> a;
     private ArrayList<RoadWorkItem> all;
-    private DataFeed dataFeed;
+    private ListController l;
+    // private DataFeed dataFeed;
+
+    public PlanJourneyFragment(ListController l) {
+        this.l = l;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,9 +70,12 @@ public class PlanJourneyFragment extends Fragment implements Observer {
             }
         });
         all = new ArrayList<RoadWorkItem>();
-        dataFeed = new DataFeed();
-        dataFeed.fetchData("plannedRoadWork", plannedRoadWorksURL);
-        dataFeed.addObserver(this);
+//        dataFeed = new DataFeed();
+//        dataFeed.fetchData("plannedRoadWork", plannedRoadWorksURL);
+//        dataFeed.addObserver(this);
+
+        a = l.getPlannedList();
+        all.addAll(a);
 
 
         listView = view.findViewById(R.id.journey_list);
@@ -149,9 +160,9 @@ public class PlanJourneyFragment extends Fragment implements Observer {
 
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
-        a = dataFeed.getList();
-        all.addAll(a);
-    }
+//    @Override
+//    public void update(Observable o, Object arg) {
+//        a = dataFeed.getList();
+//        all.addAll(a);
+//    }
 }

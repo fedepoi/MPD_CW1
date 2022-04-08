@@ -27,31 +27,27 @@ import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
-public class CheckByRoadFragment extends Fragment implements Observer {
+public class CheckByRoadFragment extends Fragment {
 
     ListView listView;
     ArrayAdapter adapter;
-    // private String plannedRoadWorksURL = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
-    private String roadWorksURL = "https://trafficscotland.org/rss/feeds/roadworks.aspx";
-    private String incidentsURL = "https://trafficscotland.org/rss/feeds/currentincidents.aspx";
     private EditText textInput;
-    private ProgressBar loading;
-    // final Calendar myCalendar = Calendar.getInstance();
 
 
     private ArrayList<RoadWorkItem> a;
     private ArrayList<RoadWorkItem> b;
-    // private ArrayList<RoadWorkItem> c;
     private ArrayList<RoadWorkItem> all;
-    private DataFeed dataFeed1;
-    private DataFeed dataFeed2;
+
 
     private LinearLayout editTextLayout;
     private Button addBtn;
     private Button removeBtn;
     private Button filterBtn;
-    //   private DataFeed dataFeed3;
+    private ListController l;
 
+    public CheckByRoadFragment(ListController l) {
+        this.l = l;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -112,16 +108,22 @@ public class CheckByRoadFragment extends Fragment implements Observer {
         });
 
         all = new ArrayList<RoadWorkItem>();
+        a = l.getIncidentsList();
+        b = l.getRoadWorkItemsList();
 
-        dataFeed1 = new DataFeed();
-        dataFeed1.fetchData("incident", incidentsURL);
-        dataFeed1.addObserver(this);
+        if (a != null) {
+            all.addAll(a);
+        }
 
-        dataFeed2 = new DataFeed();
-        dataFeed2.fetchData("roadWork", roadWorksURL);
-        dataFeed2.addObserver(this);
+        if (b != null) {
+            all.addAll(b);
+        }
 
-        loading = view.findViewById(R.id.check_by_road_loading);
+
+        adapter = new RoadWorkItemAdapter(getActivity(),
+                R.layout.map_fragment, all);
+        listView.setAdapter(adapter);
+
         textInput = view.findViewById(R.id.check_by_road_text_input);
         editTextLayout = view.findViewById(R.id.edit_text_linear_layout);
         addBtn = view.findViewById(R.id.add_button);
@@ -185,39 +187,4 @@ public class CheckByRoadFragment extends Fragment implements Observer {
         return view;
     }
 
-
-    @Override
-    public void update(Observable o, Object arg) {
-        ArrayList<RoadWorkItem> tmp;
-
-
-        a = dataFeed1.getList();
-        b = dataFeed2.getList();
-
-        if (a != null) {
-            all.addAll(a);
-        }
-
-        if (b != null) {
-            all.addAll(b);
-        }
-        Handler uiThread = new Handler(Looper.getMainLooper());
-        uiThread.post(new Runnable() {
-            @Override
-            public void run() {
-                loading.setVisibility(View.VISIBLE);
-
-                Log.e("UI", "updating UI");
-                adapter = new RoadWorkItemAdapter(getActivity(),
-                        R.layout.map_fragment, all);
-                listView.setAdapter(adapter);
-
-
-                if (dataFeed1.getFinished() && dataFeed2.getFinished()) {
-                    loading.setVisibility(View.GONE);
-                }
-            }
-        });
-
-    }
 }

@@ -21,6 +21,8 @@ import android.os.Message;
 import android.util.Log;
 
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -46,14 +48,16 @@ import java.util.Observer;
 public class MapsActivity extends AppCompatActivity implements Observer, NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawer;
 
-    private String plannedRoadWorksURL = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
-    private String roadWorksURL = "https://trafficscotland.org/rss/feeds/roadworks.aspx";
-    private String incidentsURL = "https://trafficscotland.org/rss/feeds/currentincidents.aspx";
+    //    private String plannedRoadWorksURL = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
+//    private String roadWorksURL = "https://trafficscotland.org/rss/feeds/roadworks.aspx";
+//    private String incidentsURL = "https://trafficscotland.org/rss/feeds/currentincidents.aspx";
     private ArrayList<RoadWorkItem> plannedRoadWorksArray = new ArrayList<RoadWorkItem>();
     private ArrayList<RoadWorkItem> roadWorksArray = new ArrayList<RoadWorkItem>();
     private ArrayList<RoadWorkItem> incidentsArray = new ArrayList<RoadWorkItem>();
 
-    private DataFeed df;
+
+    private ListController l;
+    private ProgressBar loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,9 +78,16 @@ public class MapsActivity extends AppCompatActivity implements Observer, Navigat
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(MapsActivity.this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        Fragment fragment = new org.me.gcu.vivaldo_federico_s1828951.MapFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
 
+
+        //Fragment fragment = new org.me.gcu.vivaldo_federico_s1828951.MapFragment();
+        //  getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+
+        l = new ListController(MapsActivity.this);
+        l.addObserver(this);
+
+         loading = findViewById(R.id.main_loading);
+        loading.setVisibility(View.VISIBLE);
     }
 
 
@@ -86,20 +97,19 @@ public class MapsActivity extends AppCompatActivity implements Observer, Navigat
         FragmentTransaction transaction = manager.beginTransaction();
         switch (item.getItemId()) {
             case R.id.home:
-                Fragment fragment = new org.me.gcu.vivaldo_federico_s1828951.MapFragment();
+                Fragment fragment = new org.me.gcu.vivaldo_federico_s1828951.MapFragment(this.l);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
                 break;
             case R.id.date:
-
-                Fragment fragment2 = new CheckByDateFragment();
+                Fragment fragment2 = new CheckByDateFragment(l);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment2).commit();
                 break;
             case R.id.road:
-                Fragment fragment3 = new CheckByRoadFragment();
+                Fragment fragment3 = new CheckByRoadFragment(l);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment3).commit();
                 break;
             case R.id.plan:
-                Fragment fragment4 = new PlanJourneyFragment();
+                Fragment fragment4 = new PlanJourneyFragment(l);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment4).commit();
                 break;
         }
@@ -109,7 +119,20 @@ public class MapsActivity extends AppCompatActivity implements Observer, Navigat
 
     @Override
     public void update(Observable o, Object arg) {
-        System.out.println(df.getList().toString());
+        Log.e("road list -->", String.valueOf(l.getRoadWorkItemsList().size()));
+        Log.e("plan list -->", String.valueOf(l.getPlannedList().size()));
+        Log.e("incidents list -->", String.valueOf(l.getIncidentsList().size()));
+
+        roadWorksArray = l.getRoadWorkItemsList();
+        plannedRoadWorksArray = l.getPlannedList();
+        incidentsArray = l.getIncidentsList();
+
+        if(l.getFinished()){
+
+            Fragment fragment = new org.me.gcu.vivaldo_federico_s1828951.MapFragment(this.l);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+        }
+
     }
 
 
