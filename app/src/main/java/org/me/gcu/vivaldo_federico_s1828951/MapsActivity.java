@@ -48,7 +48,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-
+// Federico Vivaldo S1828951
 public class MapsActivity extends AppCompatActivity implements Observer, NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawer;
     private ArrayList<RoadWorkItem> plannedRoadWorksArray = new ArrayList<RoadWorkItem>();

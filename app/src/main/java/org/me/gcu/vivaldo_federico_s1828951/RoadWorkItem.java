@@ -78,11 +78,8 @@ public class RoadWorkItem {
                 }
                 break;
             case "roadWork":
-
                 String noBR2 = this.description.replaceAll("(<br />)+", "+");
                 String[] split2 = noBR2.trim().split("\\+");
-
-                Log.e("-", String.valueOf(split2.length));
                 if (split2.length > 1 && split2.length <= 3) {
                     try {
                         String sd = split2[0].replace("Start Date: ", "");
@@ -108,7 +105,6 @@ public class RoadWorkItem {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
                     Date newStartDate = dateFormat.parse(this.pubDate);
                     setStartDate(newStartDate);
-                    Log.d("incident ->", String.valueOf(this.startDate));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

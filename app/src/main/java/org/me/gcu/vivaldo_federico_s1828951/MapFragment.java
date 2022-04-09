@@ -55,7 +55,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import com.google.android.gms.maps.SupportMapFragment;
-
+// Federico Vivaldo S1828951
 public class MapFragment extends Fragment implements
         //Observer,
         OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener,

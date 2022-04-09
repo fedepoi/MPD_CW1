@@ -17,7 +17,7 @@ import com.google.android.gms.maps.model.Marker;
 
 import java.text.SimpleDateFormat;
 
-
+// Federico Vivaldo S1828951
 public class CustomInfoWindow implements GoogleMap.InfoWindowAdapter {
 
     private final View mWindow;

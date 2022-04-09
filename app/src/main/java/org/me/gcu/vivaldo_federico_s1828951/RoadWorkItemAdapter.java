@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-
+// Federico Vivaldo S1828951
 public class RoadWorkItemAdapter extends ArrayAdapter<RoadWorkItem> {
 
     private Activity activity;
