@@ -4,12 +4,15 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
-public class RoadWorkItem  {
+public class RoadWorkItem {
     private String title;
     private String description;
     private String link;
@@ -26,7 +29,7 @@ public class RoadWorkItem  {
     private String type;
 
 
-    public RoadWorkItem(String type)  {
+    public RoadWorkItem(String type) {
         this.title = "";
         this.description = "";
         this.link = "";
@@ -75,47 +78,40 @@ public class RoadWorkItem  {
                 }
                 break;
             case "roadWork":
-                // System.out.println("rw");
-                // Log.d("road work desc ->", this.description);
-
 
                 String noBR2 = this.description.replaceAll("(<br />)+", "+");
                 String[] split2 = noBR2.trim().split("\\+");
-                //     Log.e("->", String.valueOf(split2.length));
-                if (split2.length >= 1 && split2.length <= 3) {
+
+                Log.e("-", String.valueOf(split2.length));
+                if (split2.length > 1 && split2.length <= 3) {
                     try {
                         String sd = split2[0].replace("Start Date: ", "");
                         String ed = split2[1].replace("End Date: ", "");
                         SimpleDateFormat dateFormat = new SimpleDateFormat("E, dd MMMM yyyy - HH:mm");
                         Date newSd = dateFormat.parse(sd);
                         Date newEd = dateFormat.parse(ed);
-                        //  Log.d("->", String.valueOf(newSd));
-
                         setStartDate(newSd);
                         setEndDate(newEd);
+                        if (split2.length == 3) {
+                            setDesc(split2[2]);
+                        }
+
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-
-                    //    Log.i("->", Arrays.toString(split2));
-
-//                    try {
-//                        if (split2.length >= 3) {
-//                            setDesc(split2[2]);
-//                        }
-//                    } catch (Exception e) {
-//                        Log.e("e", e.toString());
-//                    }
                 }
 
 
                 break;
             case "incident":
-                // Log.d("incident ->", this.description);
-                // System.out.println("inc");
-//                String noBR3 = this.description.replaceAll("(<br />)+", "+");
-//                String[] split3 = noBR3.trim().split("\\+");
-//                Log.e("->", String.valueOf(split3.length));
+                try {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
+                    Date newStartDate = dateFormat.parse(this.pubDate);
+                    setStartDate(newStartDate);
+                    Log.d("incident ->", String.valueOf(this.startDate));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 break;
         }
 
@@ -248,11 +244,7 @@ public class RoadWorkItem  {
     }
 
     public Date getStartDate() {
-        //  Log.e("date->", String.valueOf(this.startDate.getTime()));
-
-
         return this.startDate;
-
     }
 
     public Date getEndDate() {
@@ -277,7 +269,6 @@ public class RoadWorkItem  {
     public String getType() {
         return this.type;
     }
-
 
 
 }
